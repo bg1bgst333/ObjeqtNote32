@@ -6,7 +6,7 @@
 // 既定のヘッダ
 #include <string>	// std::string
 // 独自のヘッダ
-#include "Window.h"	// CWindow
+#include "MenuWindow.h"	// CMenuWindow
 #include "resource.h"	// リソース.
 
 // マクロの定義
@@ -18,7 +18,7 @@
 #endif
 
 // メインウィンドウクラスCMainWindow
-class CMainWindow : public CWindow{
+class CMainWindow : public CMenuWindow{
 
 	// publicメンバ
 	public:
