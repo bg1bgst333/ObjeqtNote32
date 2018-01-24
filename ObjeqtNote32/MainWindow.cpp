@@ -49,6 +49,10 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	// メニューのセット.
 	m_pMenuBar->SetMenu(hwnd);	// SetMenuでhwndにメニューをセット.
 
+	// メニューハンドラの追加.
+	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
+	AddCommandHandler(ID_FILE_SAVE_AS, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileSaveAs);	// AddCommandHandlerでID_FILE_SAVE_ASに対するハンドラCMainWindow::OnFileSaveAsを登録.
+
 	// 常にウィンドウ作成に成功するものとする.
 	return 0;	// 0を返すと, ウィンドウ作成に成功したということになる.
 
@@ -57,15 +61,33 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 // ウィンドウが破棄された時.
 void CMainWindow::OnDestroy(){
 
+	// メニューハンドラの削除.
+	DeleteCommandHandler(ID_FILE_OPEN, 0);	// DeleteCommandHandlerでID_FILE_OPENのハンドラを削除.
+	DeleteCommandHandler(ID_FILE_SAVE_AS, 0);	// DeleteCommandHandlerでID_FILE_SAVE_ASのハンドラを削除.
+
 	// 親ウィンドウのOnDestroyを呼ぶ.
 	CMenuWindow::OnDestroy();	// CMenuWindow::OnDestroyを呼ぶ.
 
 }
 
-// コマンドが発生した時.
-BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam){
+// "開く"を選択された時のハンドラ.
+int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam){
 
-	// 処理していないのでFALSE.
-	return FALSE;	// returnでFALSEを返す.
+	// "OnFileOpen"を表示.
+	MessageBox(m_hWnd, _T("OnFileOpen"), _T("ObjeqtNote"), MB_OK | MB_ICONASTERISK);	// MessageBoxで"OnFileOpen"と表示.
+
+	// 処理したので0.
+	return 0;	// returnで0を返す.
+
+}
+
+// "名前を付けて保存"を選択された時のハンドラ.
+int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam){
+
+	// "OnFileSaveAs"を表示.
+	MessageBox(m_hWnd, _T("OnFileSaveAs"), _T("ObjeqtNote"), MB_OK | MB_ICONASTERISK);	// MessageBoxで"OnFileSaveAs"と表示.
+
+	// 処理したので0.
+	return 0;	// returnで0を返す.
 
 }
