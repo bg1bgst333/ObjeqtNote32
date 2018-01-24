@@ -7,10 +7,20 @@
 // コンストラクタCMainWindow()
 CMainWindow::CMainWindow() : CMenuWindow(){
 
+	// メンバの初期化.
+	m_pMultiView = NULL;	// m_pMultiViewをNULLで初期化.
+
 }
 
 // デストラクタ~CMainWindow()
 CMainWindow::~CMainWindow(){
+
+	// メンバの終了処理.
+	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
+		DestroyWindow(m_pMultiView->m_hWnd);	// DestroyWindowでm_pMultiView->m_hWndを破棄.
+		delete m_pMultiView;	// deleteでm_pMultiViewを解放.
+		m_pMultiView = NULL;	// m_pMultiViewにNULLをセット.
+	}
 
 }
 
@@ -50,6 +60,12 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	// メニューのセット.
 	m_pMenuBar->SetMenu(hwnd);	// SetMenuでhwndにメニューをセット.
 
+	// マルチビューコントロールオブジェクトの作成.
+	m_pMultiView = new CMultiView();	// CMultiViewオブジェクトの作成.
+
+	// マルチビューコントロールのウィンドウ作成.
+	m_pMultiView->Create(_T(""), WS_BORDER, 0, 0, 640, 480, hwnd, (HMENU)(WM_APP + 1), lpCreateStruct->hInstance);	// m_pMultiView->Createで作成.
+
 	// メニューハンドラの追加.
 	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
 	AddCommandHandler(ID_FILE_SAVE_AS, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileSaveAs);	// AddCommandHandlerでID_FILE_SAVE_ASに対するハンドラCMainWindow::OnFileSaveAsを登録.
@@ -65,6 +81,13 @@ void CMainWindow::OnDestroy(){
 	// メニューハンドラの削除.
 	DeleteCommandHandler(ID_FILE_OPEN, 0);	// DeleteCommandHandlerでID_FILE_OPENのハンドラを削除.
 	DeleteCommandHandler(ID_FILE_SAVE_AS, 0);	// DeleteCommandHandlerでID_FILE_SAVE_ASのハンドラを削除.
+
+	// 子ウィンドウオブジェクトの破棄.
+	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
+		DestroyWindow(m_pMultiView->m_hWnd);	// DestroyWindowでm_pMultiView->m_hWndを破棄.
+		delete m_pMultiView;	// deleteでm_pMultiViewを解放.
+		m_pMultiView = NULL;	// m_pMultiViewにNULLをセット.
+	}
 
 	// 親ウィンドウのOnDestroyを呼ぶ.
 	CMenuWindow::OnDestroy();	// CMenuWindow::OnDestroyを呼ぶ.

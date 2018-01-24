@@ -203,6 +203,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MultiView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UserControl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Window.cpp"
 				>
 			</File>
@@ -249,7 +257,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MultiView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UserControl.h"
 				>
 			</File>
 			<File

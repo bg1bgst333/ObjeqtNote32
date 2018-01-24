@@ -7,6 +7,7 @@
 #include <string>	// std::string
 // 独自のヘッダ
 #include "MenuWindow.h"	// CMenuWindow
+#include "MultiView.h"	// CMultiView
 #include "resource.h"	// リソース.
 
 // マクロの定義
@@ -22,6 +23,9 @@ class CMainWindow : public CMenuWindow{
 
 	// publicメンバ
 	public:
+
+		// publicメンバ変数
+		CMultiView *m_pMultiView;	// CMultiViewオブジェクトポインタm_pMultiView.
 
 		// publicメンバ関数
 		// コンストラクタ・デストラクタ
