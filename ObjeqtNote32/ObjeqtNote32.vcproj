@@ -179,6 +179,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\c_string_utility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MainApplication.cpp"
 				>
 			</File>
@@ -210,6 +218,14 @@
 			>
 			<File
 				RelativePath=".\Application.h"
+				>
+			</File>
+			<File
+				RelativePath=".\c_string_utility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FileDialog.h"
 				>
 			</File>
 			<File
