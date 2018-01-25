@@ -23,8 +23,8 @@ CMainWindow::~CMainWindow(){
 // ウィンドウクラス登録関数RegisterClass.
 BOOL CMainWindow::RegisterClass(HINSTANCE hInstance){
 
-	// ウィンドウプロシージャにはCWindow::StaticWndowProc, メニューはなし(NULL)とする.((LPCTSTR)でキャストしないとオーバーロードが曖昧になる.)
-	return CWindow::RegisterClass(hInstance, _T("CMainWindow"), (LPCTSTR)NULL);	// CWindow::RegisterClassで登録.
+	// メニュー無し, LTGRAY_BRUSH.
+	return RegisterClass(hInstance, NULL);	// RegisterClassで登録.
 
 }
 
@@ -32,7 +32,15 @@ BOOL CMainWindow::RegisterClass(HINSTANCE hInstance){
 BOOL CMainWindow::RegisterClass(HINSTANCE hInstance, LPCTSTR lpszMenuName){
 
 	// ウィンドウプロシージャにはCWindow::StaticWndowProc, メニューはlpszMenuNameとする.((LPCTSTR)でキャストしないとオーバーロードが曖昧になる.)
-	return CWindow::RegisterClass(hInstance, _T("CMainWindow"), (LPCTSTR)lpszMenuName);	// CWindow::RegisterClassで登録.
+	return RegisterClass(hInstance, (LPCTSTR)lpszMenuName, (HBRUSH)GetStockObject(LTGRAY_BRUSH));	// CWindow::RegisterClassで登録.(背景はLTGRAY_BRUSH.)
+
+}
+
+// ウィンドウクラス登録関数RegisterClass.(メニュー名指定, 背景ブラシ指定バージョン.)
+BOOL CMainWindow::RegisterClass(HINSTANCE hInstance, LPCTSTR lpszMenuName, HBRUSH hbrBackground){
+
+	// ウィンドウプロシージャにはCWindow::StaticWndowProc, メニューはlpszMenuNameとする.((LPCTSTR)でキャストしないとオーバーロードが曖昧になる.背景はhbrBackground.)
+	return CMenuWindow::RegisterClass(hInstance, _T("CMainWindow"), (LPCTSTR)lpszMenuName, hbrBackground);	// CMenuWindow::RegisterClassで登録.
 
 }
 

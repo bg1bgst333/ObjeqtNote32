@@ -21,8 +21,16 @@ CMenuWindow::~CMenuWindow(){
 // ウィンドウクラス登録関数RegisterClass.(ウィンドウプロシージャ省略, メニュー名指定バージョン.)
 BOOL CMenuWindow::RegisterClass(HINSTANCE hInstance, LPCTSTR lpctszClassName, LPCTSTR lpszMenuName){
 
-	// メニューはlpszMenuNameを使う.
-	return CWindow::RegisterClass(hInstance, lpctszClassName, lpszMenuName);	// CWindow::RegisterClassで登録.
+	// メニューはlpszMenuNameを使う.背景は(HBRUSH)GetStockObject(LTGRAY_BRUSH).
+	return RegisterClass(hInstance, lpctszClassName, lpszMenuName, (HBRUSH)GetStockObject(LTGRAY_BRUSH));	// RegisterClassで登録.
+
+}
+
+// ウィンドウクラス登録関数RegisterClass.(ウィンドウプロシージャ省略, メニュー名指定バージョン, hbrBackground指定.)
+BOOL CMenuWindow::RegisterClass(HINSTANCE hInstance, LPCTSTR lpctszClassName, LPCTSTR lpszMenuName, HBRUSH hbrBackground){
+
+	// hbrBackgroundを指定,
+	return CWindow::RegisterClass(hInstance, lpctszClassName, lpszMenuName, hbrBackground);	// CWindow::RegisterClassで登録.
 
 }
 

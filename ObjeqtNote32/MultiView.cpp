@@ -19,7 +19,15 @@ CMultiView::~CMultiView(){
 BOOL CMultiView::RegisterClass(HINSTANCE hInstance){
 
 	// ウィンドウクラスの登録.
-	return CUserControl::RegisterClass(hInstance, _T("CMultiView"));	// CUserControl::RegisterClassで登録.
+	return RegisterClass(hInstance, (HBRUSH)GetStockObject(LTGRAY_BRUSH));	// CUserControl::RegisterClassで登録.
+
+}
+
+// ウィンドウクラス登録関数RegisterClass.(hbrBackground指定.)
+BOOL CMultiView::RegisterClass(HINSTANCE hInstance, HBRUSH hbrBackground){
+
+	// hbrBackgroundを指定.
+	return CUserControl::RegisterClass(hInstance, _T("CMultiView"), hbrBackground);	// CUserControl::RegisterClassで登録.
 
 }
 

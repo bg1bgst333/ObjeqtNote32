@@ -7,8 +7,8 @@
 BOOL CMainApplication::InitInstance(HINSTANCE hInstance, LPTSTR lpCmdLine, int nShowCmd){
 
 	// ウィンドウクラスの登録.
-	CMainWindow::RegisterClass(hInstance);	// CMainWindow::RegisterClassでウィンドウクラス"CMainWindow"を登録.
-	CMultiView::RegisterClass(hInstance);	// CMultiView::RegisterClassでウィンドウクラス"CMultiView"を登録.
+	CMainWindow::RegisterClass(hInstance, NULL, (HBRUSH)GetStockObject(LTGRAY_BRUSH));	// CMainWindow::RegisterClassでウィンドウクラス"CMainWindow"を登録.
+	CMultiView::RegisterClass(hInstance, (HBRUSH)GetStockObject(GRAY_BRUSH));	// CMultiView::RegisterClassでウィンドウクラス"CMultiView"を登録.
 
 	// CMainWindowオブジェクトの作成.
 	m_pMainWnd = new CMainWindow();	// CMainWindowオブジェクトを作成し, m_pMainWndに格納.
