@@ -15,12 +15,8 @@ CMainWindow::CMainWindow() : CMenuWindow(){
 // デストラクタ~CMainWindow()
 CMainWindow::~CMainWindow(){
 
-	// メンバの終了処理.
-	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
-		DestroyWindow(m_pMultiView->m_hWnd);	// DestroyWindowでm_pMultiView->m_hWndを破棄.
-		delete m_pMultiView;	// deleteでm_pMultiViewを解放.
-		m_pMultiView = NULL;	// m_pMultiViewにNULLをセット.
-	}
+	// メンバの終了処理
+	Destroy();	// Destroyでこのウィンドウの終了処理をする.
 
 }
 
@@ -45,6 +41,21 @@ BOOL CMainWindow::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, 
 
 	// ウィンドウクラス名は"CMainWindow".
 	return CWindow::Create(_T("CMainWindow"), lpctszWindowName, dwStyle, x, y, iWidth, iHeight, hWndParent, hMenu, hInstance);	// CWindow::Createにウィンドウクラス名"CMainWindow"を指定.
+
+}
+
+// ウィンドウの破棄と終了処理関数Destroy.
+void CMainWindow::Destroy(){
+
+	// マルチビューの削除.
+	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
+		m_pMultiView->Destroy();	// m_pMultiView->Destroyでm_pMultiViewの終了処理を実行.
+		delete m_pMultiView;	// deleteでm_pMultiViewを解放.
+		m_pMultiView = NULL;	// m_pMultiViewにNULLをセット.
+	}
+
+	// 親ウィンドウのDestroyを呼ぶ.
+	CMenuWindow::Destroy();	// CMenuWindow::Destroyを呼ぶ.
 
 }
 
@@ -82,15 +93,25 @@ void CMainWindow::OnDestroy(){
 	DeleteCommandHandler(ID_FILE_OPEN, 0);	// DeleteCommandHandlerでID_FILE_OPENのハンドラを削除.
 	DeleteCommandHandler(ID_FILE_SAVE_AS, 0);	// DeleteCommandHandlerでID_FILE_SAVE_ASのハンドラを削除.
 
-	// 子ウィンドウオブジェクトの破棄.
-	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
-		DestroyWindow(m_pMultiView->m_hWnd);	// DestroyWindowでm_pMultiView->m_hWndを破棄.
-		delete m_pMultiView;	// deleteでm_pMultiViewを解放.
-		m_pMultiView = NULL;	// m_pMultiViewにNULLをセット.
-	}
+	// メンバの終了処理
+	//Destroy();	// Destroyでこのウィンドウの終了処理をする.
 
 	// 親ウィンドウのOnDestroyを呼ぶ.
 	CMenuWindow::OnDestroy();	// CMenuWindow::OnDestroyを呼ぶ.
+
+	// 終了メッセージの送信.
+	PostQuitMessage(0);	// PostQuitMessageで終了コードを0としてWM_QUITメッセージを送信.
+
+}
+
+// ウィンドウを閉じた時.
+int CMainWindow::OnClose(){
+
+	// ウィンドウの終了処理.
+	Destroy();	// Destroyでこのウィンドウの終了処理をする.
+
+	// 0を返す.
+	return 0;	// 0を返してウィンドウを閉じる.
 
 }
 
