@@ -5,6 +5,9 @@
 // コンストラクタCMultiView
 CMultiView::CMultiView() : CUserControl(){
 
+	// メンバ変数の初期化.
+	m_pMultiViewItemsPanel = NULL;	// m_pMultiViewItemsPanelをNULLで初期化.
+
 }
 
 // デストラクタ~CMultiView
@@ -42,6 +45,13 @@ BOOL CMultiView::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, i
 // ウィンドウの破棄と終了処理関数Destroy.
 void CMultiView::Destroy(){
 
+	// マルチビューアイテムズパネルの破棄.
+	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでない時.
+		m_pMultiViewItemsPanel->Destroy();	// m_pMultiViewItemsPanel->Destroyで破棄.
+		delete m_pMultiViewItemsPanel;	// deleteでm_pMultiViewItemsPanelを解放.
+		m_pMultiViewItemsPanel = NULL;	// m_pMultiViewItemsPanelにNULLをセット.
+	}
+
 	// 親ウィンドウのDestroyを呼ぶ.
 	CUserControl::Destroy();	// CUserControl::Destroyを呼ぶ.
 
@@ -49,6 +59,12 @@ void CMultiView::Destroy(){
 
 // ウィンドウの作成が開始された時.
 int CMultiView::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
+
+	// マルチビューアイテムズパネルの生成.
+	m_pMultiViewItemsPanel = new CMultiViewItemsPanel();	// CMultiViewItemsPanelの作成.
+
+	// マルチビューアイテムズパネルのウィンドウ生成.
+	m_pMultiViewItemsPanel->Create(_T(""), 0, 0, 0, 320, 240, hwnd, (HMENU)(WM_APP + 2), lpCreateStruct->hInstance);	// m_pMultiViewItemsPanel->Createでウィンドウ生成.
 
 	// 常にウィンドウ作成に成功するものとする.
 	return 0;	// 0を返すと, ウィンドウ作成に成功したということになる.
@@ -83,8 +99,8 @@ void CMultiView::OnPaint(){
 	hBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0x7f));		// CreateSolidBrushで青(濃)のブラシを作成.
 
 	// ペンとブラシの選択.
-	HPEN hOldPen = (HPEN)SelectObject(hDC, hPen);		// 緑のペンを選択.
-	HBRUSH hOldBrush = (HBRUSH)SelectObject(hDC, hBrush);	// 緑のブラシを選択.
+	HPEN hOldPen = (HPEN)SelectObject(hDC, hPen);		// 青のペンを選択.
+	HBRUSH hOldBrush = (HBRUSH)SelectObject(hDC, hBrush);	// 青のブラシを選択.
 
 	// 矩形描画.
 	Rectangle(hDC, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight);	// Rectangleで矩形を描画.
