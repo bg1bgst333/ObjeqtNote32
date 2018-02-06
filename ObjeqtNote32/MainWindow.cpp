@@ -111,6 +111,18 @@ void CMainWindow::OnDestroy(){
 	PostQuitMessage(0);	// PostQuitMessageで終了コードを0としてWM_QUITメッセージを送信.
 
 }
+// ウィンドウのサイズが変更された時.
+void CMainWindow::OnSize(UINT nType, int cx, int cy){
+
+	// 親ウィンドウのOnSize.
+	CMenuWindow::OnSize(nType, cx, cy);	// CWindowのOnSize.
+
+	// 画面更新.
+	InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで更新.
+
+}
+
+
 
 // ウィンドウの描画を要求された時のハンドラOnPaint.
 void CMainWindow::OnPaint(){
