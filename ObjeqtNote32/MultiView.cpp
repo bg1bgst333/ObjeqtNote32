@@ -64,7 +64,7 @@ void CMultiView::Add(LPCTSTR lpctszWindowName, int x, int y, int iWidth, int iHe
 
 	// アイテムズパネルに追加.
 	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでなければ.
-		m_pMultiViewItemsPanel->Add(lpctszWindowName, x, y, iHeight, iWidth, hInstance);	// Addで末尾に追加.
+		m_pMultiViewItemsPanel->Add(lpctszWindowName, x, y, iWidth, iHeight, hInstance);	// Addで末尾に追加.
 	}
 
 }
@@ -76,6 +76,19 @@ void CMultiView::Remove(){
 	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでなければ.
 		m_pMultiViewItemsPanel->Remove();	// Removeで末尾から削除.
 	}
+
+}
+
+// アイテムを取得する関数Get.
+CMultiViewItem * CMultiView::Get(int iIndex){
+
+	// アイテムズパネルから取得.
+	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでなければ.
+		return m_pMultiViewItemsPanel->Get(iIndex);	// 
+	}
+
+	// なければNULL.
+	return NULL;	// NULLを返す.
 
 }
 

@@ -8,6 +8,7 @@
 // 独自のヘッダ
 #include "MenuWindow.h"	// CMenuWindow
 #include "MultiView.h"	// CMultiView
+#include "Edit.h"	// CEdit
 #include "resource.h"	// リソース.
 
 // マクロの定義
@@ -26,6 +27,7 @@ class CMainWindow : public CMenuWindow{
 
 		// publicメンバ変数
 		CMultiView *m_pMultiView;	// CMultiViewオブジェクトポインタm_pMultiView.
+		CEdit *m_pEdit;	// CEditオブジェクトポインタm_pEdit.
 
 		// publicメンバ関数
 		// コンストラクタ・デストラクタ

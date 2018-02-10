@@ -77,6 +77,14 @@ void CMultiViewItemsPanel::Remove(){
 
 }
 
+// アイテムを取得する関数Get.
+CMultiViewItem * CMultiViewItemsPanel::Get(int iIndex){
+
+	// iIndex番目の要素を返す.
+	return m_vecMultiViewItemList[iIndex];	// m_vecMultiViewItemList[iIndex]を返す.
+
+}
+
 // 全てのアイテムを削除する関数RemoveAll.
 void CMultiViewItemsPanel::RemoveAll(){
 

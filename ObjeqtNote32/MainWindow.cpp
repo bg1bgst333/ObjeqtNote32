@@ -9,7 +9,7 @@ CMainWindow::CMainWindow() : CMenuWindow(){
 
 	// メンバの初期化.
 	m_pMultiView = NULL;	// m_pMultiViewをNULLで初期化.
-
+	m_pEdit = NULL;	// m_pEditをNULLで初期化.
 }
 
 // デストラクタ~CMainWindow()
@@ -55,6 +55,13 @@ BOOL CMainWindow::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, 
 // ウィンドウの破棄と終了処理関数Destroy.
 void CMainWindow::Destroy(){
 
+	// エディットコントロールの削除.
+	if (m_pEdit != NULL){	// m_pEditがNULLでない時.
+		m_pEdit->Destroy();	// m_pEdit->Destroyで破棄.
+		delete m_pEdit;	// deleteでm_pEditを解放.
+		m_pEdit = NULL;	// m_pEditにNULLをセット.
+	}
+
 	// マルチビューアイテムの削除.
 	m_pMultiView->RemoveAll();	// m_pMultiView->RemoveAllでアイテムを全て削除.
 
@@ -89,8 +96,15 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	m_pMultiView->Create(_T(""), 0, 0, 0, 640, 480, hwnd, (HMENU)(WM_APP + 1), lpCreateStruct->hInstance);	// m_pMultiView->Createで作成.
 
 	// マルチビューアイテムの追加.
-	m_pMultiView->Add(_T("Item0"), 32, 32, 64, 64, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item0"を追加.
-	m_pMultiView->Add(_T("Item1"), 128, 32, 64, 64, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item1"を追加.
+	m_pMultiView->Add(_T("Item0"), 32, 32, 512, 128, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item0"を追加.
+	m_pMultiView->Add(_T("Item1"), 32, 256, 64, 64, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item1"を追加.
+
+	// マルチビューアイテムの取得.
+	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
+	
+	// エディットコントロールの生成.
+	m_pEdit = new CEdit();	// CEditオブジェクトを生成.
+	m_pEdit->Create(_T("Edit"), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 480, 100, pItem0->m_hWnd, (HMENU)WM_APP + 200, lpCreateStruct->hInstance);	// m_pEdit->CreateでpItem0->m_hWndを親としてウィンドウ作成.
 
 	// メニューハンドラの追加.
 	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
@@ -128,8 +142,6 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy){
 	InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで更新.
 
 }
-
-
 
 // ウィンドウの描画を要求された時のハンドラOnPaint.
 void CMainWindow::OnPaint(){
