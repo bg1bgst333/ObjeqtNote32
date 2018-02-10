@@ -207,6 +207,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MultiViewItem.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MultiViewItemsPanel.cpp"
 				>
 			</File>
@@ -262,6 +266,10 @@
 			</File>
 			<File
 				RelativePath=".\MultiView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MultiViewItem.h"
 				>
 			</File>
 			<File

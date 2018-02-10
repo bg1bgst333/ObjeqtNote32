@@ -59,6 +59,36 @@ void CMultiView::Destroy(){
 
 }
 
+// アイテムを末尾から追加する関数Add.
+void CMultiView::Add(LPCTSTR lpctszWindowName, int x, int y, int iWidth, int iHeight, HINSTANCE hInstance){
+
+	// アイテムズパネルに追加.
+	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでなければ.
+		m_pMultiViewItemsPanel->Add(lpctszWindowName, x, y, iHeight, iWidth, hInstance);	// Addで末尾に追加.
+	}
+
+}
+
+// アイテムを末尾から削除する関数Remove.
+void CMultiView::Remove(){
+
+	// アイテムズパネルから削除.
+	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでなければ.
+		m_pMultiViewItemsPanel->Remove();	// Removeで末尾から削除.
+	}
+
+}
+
+// 全てのアイテムを削除する関数RemoveAll.
+void CMultiView::RemoveAll(){
+
+	// アイテムズパネルから全て削除.
+	if (m_pMultiViewItemsPanel != NULL){	// m_pMultiViewItemsPanelがNULLでなければ.
+		m_pMultiViewItemsPanel->RemoveAll();
+	}
+
+}
+
 // ウィンドウの作成が開始された時.
 int CMultiView::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 

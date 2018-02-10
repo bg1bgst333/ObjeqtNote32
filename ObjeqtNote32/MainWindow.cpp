@@ -55,6 +55,9 @@ BOOL CMainWindow::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, 
 // ウィンドウの破棄と終了処理関数Destroy.
 void CMainWindow::Destroy(){
 
+	// マルチビューアイテムの削除.
+	m_pMultiView->RemoveAll();	// m_pMultiView->RemoveAllでアイテムを全て削除.
+
 	// マルチビューの削除.
 	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
 		m_pMultiView->Destroy();	// m_pMultiView->Destroyでm_pMultiViewの終了処理を実行.
@@ -84,6 +87,10 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 
 	// マルチビューコントロールのウィンドウ作成.
 	m_pMultiView->Create(_T(""), 0, 0, 0, 640, 480, hwnd, (HMENU)(WM_APP + 1), lpCreateStruct->hInstance);	// m_pMultiView->Createで作成.
+
+	// マルチビューアイテムの追加.
+	m_pMultiView->Add(_T("Item0"), 32, 32, 64, 64, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item0"を追加.
+	m_pMultiView->Add(_T("Item1"), 128, 32, 64, 64, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item1"を追加.
 
 	// メニューハンドラの追加.
 	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.

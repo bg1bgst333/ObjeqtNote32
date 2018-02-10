@@ -5,6 +5,10 @@
 // コンストラクタCMultiViewItemsPanel
 CMultiViewItemsPanel::CMultiViewItemsPanel() : CUserControl(){
 
+	// メンバの初期化.
+	m_vecMultiViewItemList.clear();	// m_vecMultiViewItemList.clearでクリア.
+	m_nNextId = 0;	// m_nNextIdを0で初期化.
+
 }
 
 // デストラクタ~CMultiViewItemsPanel
@@ -42,8 +46,53 @@ BOOL CMultiViewItemsPanel::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x
 // ウィンドウの破棄と終了処理関数Destroy.
 void CMultiViewItemsPanel::Destroy(){
 
+	// マルチビューアイテムリストの終了処理.
+	m_vecMultiViewItemList.clear();	// m_vecMultiViewItemList.clearでクリア.
+	m_nNextId = 0;	// m_nNextIdに0をセット.
+
 	// 親ウィンドウのDestroyを呼ぶ.
 	CUserControl::Destroy();	// CUserControl::Destroyを呼ぶ.
+
+}
+
+// アイテムを末尾から追加する関数Add.
+void CMultiViewItemsPanel::Add(LPCTSTR lpctszWindowName, int x, int y, int iWidth, int iHeight, HINSTANCE hInstance){
+
+	// マルチビューアイテムの追加.
+	CMultiViewItem *pMultiViewItem = new CMultiViewItem();	// CMultiViewItemオブジェクトを生成し, ポインタをpMultiViewItemに格納.
+	pMultiViewItem->Create(lpctszWindowName, WS_CHILD | WS_VISIBLE, x, y, iWidth, iHeight, m_hWnd, (HMENU)(MULTI_VIEW_ITEM_ID_START + m_nNextId), hInstance);	// pMultiViewItem->Createでアイテム作成.
+	m_vecMultiViewItemList.push_back(pMultiViewItem);	// m_vecMultiViewItemList.push_backで末尾に追加.
+	m_nNextId++;	// m_nNextIdをインクリメント.
+	
+}
+
+// アイテムを末尾から削除する関数Remove.
+void CMultiViewItemsPanel::Remove(){
+
+	// マルチビューアイテムの削除.
+	CMultiViewItem *pMultiViewItem = m_vecMultiViewItemList[m_vecMultiViewItemList.size() - 1];	// 末尾要素を取得.
+	delete pMultiViewItem;	// deleteでpMultiViewItemの削除.
+	m_vecMultiViewItemList.pop_back();	// m_vecMultiViewItemList.pop_backでリストを1つ減らす.
+	m_nNextId--;
+
+}
+
+// 全てのアイテムを削除する関数RemoveAll.
+void CMultiViewItemsPanel::RemoveAll(){
+
+	// アイテムの数だけ繰り返す.
+	size_t n = GetSize();	// GetSizeでサイズを取得し, nに格納.
+	for (size_t i = 0; i < n; i++){	// nの数だけ繰り返す.
+		Remove();	// Removeで末尾を削除.
+	}
+
+}
+
+// アイテムの数を返す関数GetSize.
+size_t CMultiViewItemsPanel::GetSize(){
+
+	// アイテムの要素数を返す.
+	return m_vecMultiViewItemList.size();	// m_vecMultiViewItemList.sizeで要素数を返す.
 
 }
 
