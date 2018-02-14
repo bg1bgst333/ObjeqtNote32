@@ -1,4 +1,6 @@
 // ヘッダのインクルード
+// 既定のヘッダ
+#include <shlwapi.h>	// シェルAPI
 // 独自のヘッダ
 #include "FileDialog.h"	// CFileDialog
 #include "c_string_utility.h"	// class_c_string_utility
@@ -84,6 +86,10 @@ BOOL CFileDialog::ShowOpenFileDialog(HWND hWnd){
 	// パスを格納.
 	m_tstrPath = ptszPath;	// ptszPathをm_tstrPathに代入.
 
+	// 拡張子も格納しておく.
+	TCHAR *ptszExt = PathFindExtension(ptszPath);	// ptszPathから拡張子を抜き出す.
+	m_tstrExt = ptszExt;	// m_tstrExtにptszExtをセット.
+
 	// バッファを解放.
 	delete[] ptszPath;	// delete[]でptszPathを解放.
 
@@ -124,6 +130,10 @@ BOOL CFileDialog::ShowSaveFileDialog(HWND hWnd){
 
 	// パスを格納.
 	m_tstrPath = ptszPath;	// ptszPathをm_tstrPathに代入.
+
+	// 拡張子も格納しておく.
+	TCHAR *ptszExt = PathFindExtension(ptszPath);	// ptszPathから拡張子を抜き出す.
+	m_tstrExt = ptszExt;	// m_tstrExtにptszExtをセット.
 
 	// バッファを解放.
 	delete[] ptszPath;	// delete[]でptszPathを解放.

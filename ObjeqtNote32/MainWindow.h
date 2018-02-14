@@ -9,6 +9,7 @@
 #include "MenuWindow.h"	// CMenuWindow
 #include "MultiView.h"	// CMultiView
 #include "Edit.h"	// CEdit
+#include "TextFile.h"	// CTextFile
 #include "resource.h"	// リソース.
 
 // マクロの定義
@@ -27,6 +28,7 @@ class CMainWindow : public CMenuWindow{
 
 		// publicメンバ変数
 		CMultiView *m_pMultiView;	// CMultiViewオブジェクトポインタm_pMultiView.
+		CTextFile *m_pTextFile;	// CTextFileオブジェクトポインタm_pTextFile.
 
 		// publicメンバ関数
 		// コンストラクタ・デストラクタ
@@ -42,6 +44,7 @@ class CMainWindow : public CMenuWindow{
 		virtual int OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);	// ウィンドウの作成が開始された時.
 		virtual void OnDestroy();	// ウィンドウが破棄された時.
 		virtual void OnSize(UINT nType, int cx, int cy);	// ウィンドウのサイズが変更された時.
+		virtual void OnTimer(UINT_PTR nIDEvent);	// タイマーイベントが発生した時.
 		virtual void OnPaint();	// ウィンドウの描画を要求された時のハンドラOnPaint.
 		virtual int OnClose();	// ウィンドウを閉じた時.
 		virtual int OnFileOpen(WPARAM wParam, LPARAM lParam);	// "開く"を選択された時のハンドラ.

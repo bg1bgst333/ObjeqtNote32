@@ -11,6 +11,7 @@ CWindow::CWindow(){
 
 	// メンバの初期化.
 	m_hWnd = NULL;	// m_hWndをNULLで初期化.
+	m_hInstance = NULL;	// m_hInstanceをNULLで初期化.
 	m_x = 0;	// m_xを0で初期化.
 	m_y = 0;	// m_yを0で初期化.
 	m_iWidth = 0;	// m_iWidthを0で初期化.
@@ -216,6 +217,7 @@ void CWindow::Destroy(){
 		m_hWnd = NULL;	// m_hWndにNULLをセット.
 	}
 	// サイズを0にリセット.
+	m_hInstance = NULL;	// m_hInstanceにNULLをセット.
 	m_x = 0;	// m_xを0で初期化.
 	m_y = 0;	// m_yを0で初期化.
 	m_iWidth = 0;	// m_iWidthを0で初期化.
@@ -230,6 +232,46 @@ BOOL CWindow::ShowWindow(int nCmdShow){
 
 	// ウィンドウの表示.
 	return ::ShowWindow(m_hWnd, nCmdShow);	// WindowsAPIのShowWindowでm_hWndを表示.
+
+}
+
+// テキストセット関数SetText.
+void CWindow::SetText(LPCTSTR lpctszText){
+
+	// テキストのセット.
+	SetWindowText(m_hWnd, lpctszText);	// SetWindowTextでlpctszTextのセット.
+
+}
+
+// テキストの長さ取得関数GetTextLength.
+int CWindow::GetTextLength(){
+
+	// テキストの長さを取得し, それを返す.
+	return GetWindowTextLength(m_hWnd);	// GetWindowTextLengthでテキストの長さを取得し, それをそのまま返す.
+
+}
+
+// テキスト取得関数GetText.
+tstring CWindow::GetText(){
+
+	// テキストの長さを返す.
+	int iLen = GetTextLength();	// GetTextLengthでテキストの長さを取得し, iLenに格納.
+
+	// バッファの確保.
+	TCHAR *ptszBuf = new TCHAR[iLen + 1];	// iLen + 1の長さのTCHAR動的配列を確保.
+	ZeroMemory(ptszBuf, (sizeof(TCHAR) * (iLen + 1)));	// ptszBufを0で埋める.
+
+	// テキストの取得.
+	GetWindowText(m_hWnd, ptszBuf, iLen + 1);	// GetWindowTextでテキストを取得し, ptszBufに格納.
+
+	// テキストをtstringに移す.
+	tstring tstrText = ptszBuf;	// tstrTextをptszBufで初期化.
+
+	// バッファの解放.
+	delete [] ptszBuf;	// delete[]でptszBufを解放.
+
+	// テキストを返す.
+	return tstrText;	// tstrTextを返す.
 
 }
 
@@ -421,6 +463,9 @@ LRESULT CWindow::DynamicWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 // ウィンドウの作成が開始された時.
 int CWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
+
+	// インスタンスハンドルのセット.
+	m_hInstance = lpCreateStruct->hInstance;	// m_hInstanceにlpCreateStruct->hInstanceをセット.
 
 	// 常にウィンドウ作成に成功するものとする.
 	return 0;	// 0を返すと, ウィンドウ作成に成功したということになる.

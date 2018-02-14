@@ -50,8 +50,8 @@ void CUserControl::Destroy(){
 // ウィンドウの作成が開始された時.
 int CUserControl::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 
-	// 常にウィンドウ作成に成功するものとする.
-	return 0;	// 0を返すと, ウィンドウ作成に成功したということになる.
+	// 親のOnCreateを呼ぶ.
+	return CWindow::OnCreate(hwnd, lpCreateStruct);	// CWindow::OnCreateを返す.
 
 }
 

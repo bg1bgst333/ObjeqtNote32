@@ -107,8 +107,8 @@ size_t CMultiViewItemsPanel::GetSize(){
 // ウィンドウの作成が開始された時.
 int CMultiViewItemsPanel::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 
-	// 常にウィンドウ作成に成功するものとする.
-	return 0;	// 0を返すと, ウィンドウ作成に成功したということになる.
+	// 親のOnCreateを呼ぶ.
+	return CUserControl::OnCreate(hwnd, lpCreateStruct);	// CUserControl::OnCreateを返す.
 
 }
 
