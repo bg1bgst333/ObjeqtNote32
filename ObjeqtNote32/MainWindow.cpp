@@ -55,14 +55,17 @@ BOOL CMainWindow::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, 
 // ウィンドウの破棄と終了処理関数Destroy.
 void CMainWindow::Destroy(){
 
-	// マルチビューアイテムの削除.
-	m_pMultiView->RemoveAll();	// m_pMultiView->RemoveAllでアイテムを全て削除.
-
 	// マルチビューの削除.
 	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでなければ.
+
+		// マルチビューアイテムの削除.
+		m_pMultiView->RemoveAll();	// m_pMultiView->RemoveAllでアイテムを全て削除.
+		
+		// マルチビューの破棄.
 		m_pMultiView->Destroy();	// m_pMultiView->Destroyでm_pMultiViewの終了処理を実行.
 		delete m_pMultiView;	// deleteでm_pMultiViewを解放.
 		m_pMultiView = NULL;	// m_pMultiViewにNULLをセット.
+
 	}
 
 	// 親ウィンドウのDestroyを呼ぶ.
@@ -82,11 +85,12 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	// メニューのセット.
 	m_pMenuBar->SetMenu(hwnd);	// SetMenuでhwndにメニューをセット.
 
+#if 0
 	// マルチビューコントロールオブジェクトの作成.
 	m_pMultiView = new CMultiView();	// CMultiViewオブジェクトの作成.
 
 	// マルチビューコントロールのウィンドウ作成.
-	m_pMultiView->Create(_T(""), 0, 0, 0, 640, 480, hwnd, (HMENU)(WM_APP + 1), lpCreateStruct->hInstance);	// m_pMultiView->Createで作成.
+	m_pMultiView->Create(_T(""), 0, 0, 0, 720, 800, hwnd, (HMENU)(WM_APP + 1), lpCreateStruct->hInstance);	// m_pMultiView->Createで作成.
 
 	// マルチビューアイテムの追加.
 	m_pMultiView->Add(_T("Item0"), 320, 32, 64, 64, lpCreateStruct->hInstance);	// m_pMultiView->Addで"Item0"を追加.
@@ -95,7 +99,9 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	// マルチビューアイテムの取得.
 	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
 	CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+#endif
 
+#if 0
 	// エディットコントロールの生成.
 	// エディット0.
 	CEdit *pEdit0 = new CEdit();	// CEditオブジェクトを生成.
@@ -106,6 +112,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	CEdit *pEdit1 = new CEdit();	//CEditオブジェクトを生成.
 	pEdit1->Create(_T("Edit1"), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 100, 480, pItem1->m_hWnd, (HMENU)WM_APP + 201, lpCreateStruct->hInstance);	// m_pEdit1->CreateでpItem1->m_hWndを親としてウィンドウ作成.
 	pItem1->m_mapChildMap.insert(std::make_pair(_T("Edit1"), pEdit1));	// "Edit1"をキー, pEdit1を値として, pItem1->m_mapChildMapに登録.
+#endif
 
 	// メニューハンドラの追加.
 	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
@@ -138,6 +145,11 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy){
 
 	// 親ウィンドウのOnSize.
 	CMenuWindow::OnSize(nType, cx, cy);	// CWindowのOnSize.
+
+	// マルチビューのサイズはウィンドウにぴったり合わせる.
+	if (m_pMultiView != NULL){	// NULLでなければ.
+		MoveWindow(m_pMultiView->m_hWnd, m_pMultiView->m_x, m_pMultiView->m_y, cx, cy, TRUE);	// MoveWindowでm_pMultiView->m_hWndのサイズを変更.
+	}
 
 	// 画面更新.
 	InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで更新.

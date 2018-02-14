@@ -109,7 +109,7 @@ int CMultiView::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	m_pMultiViewItemsPanel = new CMultiViewItemsPanel();	// CMultiViewItemsPanelの作成.
 
 	// マルチビューアイテムズパネルのウィンドウ生成.
-	m_pMultiViewItemsPanel->Create(_T(""), 0, 0, 0, 320 + 300, 240 + 200, hwnd, (HMENU)(WM_APP + 2), lpCreateStruct->hInstance);	// m_pMultiViewItemsPanel->Createでウィンドウ生成.
+	m_pMultiViewItemsPanel->Create(_T(""), 0, 0, 0, 800, 640, hwnd, (HMENU)(WM_APP + 2), lpCreateStruct->hInstance);	// m_pMultiViewItemsPanel->Createでウィンドウ生成.
 
 	// 初回更新タイマーをセット.
 	SetTimer(hwnd, 1, 100, NULL);	// SetTimerで更新タイマーをセット.(100ミリ秒==0.1秒)
