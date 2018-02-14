@@ -27,8 +27,6 @@ class CMainWindow : public CMenuWindow{
 
 		// publicメンバ変数
 		CMultiView *m_pMultiView;	// CMultiViewオブジェクトポインタm_pMultiView.
-		CEdit *m_pEdit0;	// CEditオブジェクトポインタm_pEdit0.
-		CEdit *m_pEdit1;	// CEditオブジェクトポインタm_pEdit1.
 
 		// publicメンバ関数
 		// コンストラクタ・デストラクタ

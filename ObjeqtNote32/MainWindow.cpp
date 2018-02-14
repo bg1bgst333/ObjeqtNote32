@@ -9,8 +9,6 @@ CMainWindow::CMainWindow() : CMenuWindow(){
 
 	// メンバの初期化.
 	m_pMultiView = NULL;	// m_pMultiViewをNULLで初期化.
-	m_pEdit0 = NULL;	// m_pEdit0をNULLで初期化.
-	m_pEdit1 = NULL;	// m_pEdit1をNULLで初期化.
 
 }
 
@@ -57,18 +55,6 @@ BOOL CMainWindow::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, 
 // ウィンドウの破棄と終了処理関数Destroy.
 void CMainWindow::Destroy(){
 
-	// エディットコントロールの削除.
-	if (m_pEdit1 != NULL){	// m_pEdit1がNULLでない時.
-		m_pEdit1->Destroy();	// m_pEdit1->Destroyで破棄.
-		delete m_pEdit1;	// deleteでm_pEdit1を解放.
-		m_pEdit1 = NULL;	// m_pEdit1にNULLをセット.
-	}
-	if (m_pEdit0 != NULL){	// m_pEdit0がNULLでない時.
-		m_pEdit0->Destroy();	// m_pEdit0->Destroyで破棄.
-		delete m_pEdit0;	// deleteでm_pEdit0を解放.
-		m_pEdit0 = NULL;	// m_pEdit0にNULLをセット.
-	}
-
 	// マルチビューアイテムの削除.
 	m_pMultiView->RemoveAll();	// m_pMultiView->RemoveAllでアイテムを全て削除.
 
@@ -111,10 +97,15 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 	CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
 
 	// エディットコントロールの生成.
-	m_pEdit0 = new CEdit();	// CEditオブジェクトを生成.
-	m_pEdit0->Create(_T("Edit"), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 480, 100, pItem0->m_hWnd, (HMENU)WM_APP + 200, lpCreateStruct->hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
-	m_pEdit1 = new CEdit();	//CEditオブジェクトを生成.
-	m_pEdit1->Create(_T("Edit"), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 100, 480, pItem1->m_hWnd, (HMENU)WM_APP + 201, lpCreateStruct->hInstance);	// m_pEdit1->CreateでpItem1->m_hWndを親としてウィンドウ作成.
+	// エディット0.
+	CEdit *pEdit0 = new CEdit();	// CEditオブジェクトを生成.
+	pEdit0->Create(_T("Edit0"), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 480, 100, pItem0->m_hWnd, (HMENU)WM_APP + 200, lpCreateStruct->hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
+	pItem0->m_mapChildMap.insert(std::make_pair(_T("Edit0"), pEdit0));	// "Edit0"をキー, pEdit0を値として, pItem0->m_mapChildMapに登録.
+
+	// エディット1.
+	CEdit *pEdit1 = new CEdit();	//CEditオブジェクトを生成.
+	pEdit1->Create(_T("Edit1"), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 100, 480, pItem1->m_hWnd, (HMENU)WM_APP + 201, lpCreateStruct->hInstance);	// m_pEdit1->CreateでpItem1->m_hWndを親としてウィンドウ作成.
+	pItem1->m_mapChildMap.insert(std::make_pair(_T("Edit1"), pEdit1));	// "Edit1"をキー, pEdit1を値として, pItem1->m_mapChildMapに登録.
 
 	// メニューハンドラの追加.
 	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
