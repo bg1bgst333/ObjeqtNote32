@@ -114,7 +114,7 @@ void CMainWindow::InitMultiView(){
 
 		// CMultiViewオブジェクトの作成.
 		m_pMultiView = new CMultiView();	// CMultiViewオブジェクトの作成.
-		m_pMultiView->Create(_T(""), 0, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hWnd, (HMENU)(WM_APP + 1), m_hInstance);	// m_pMultiView->Createで作成.
+		m_pMultiView->Create(_T(""), 0 /*WS_HSCROLL | WS_VSCROLL*/, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hWnd, (HMENU)(WM_APP + 1), m_hInstance);	// m_pMultiView->Createで作成.
 		
 	}
 
@@ -124,7 +124,7 @@ void CMainWindow::InitMultiView(){
 void CMainWindow::ShowTextFile(){
 
 	// マルチビューアイテムの追加.
-	m_pMultiView->Add(_T("Item0"), 0, 0, 720, 640, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
+	m_pMultiView->Add(_T("Item0"), 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
 
 	// マルチビューアイテムの取得.
 	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
@@ -133,7 +133,7 @@ void CMainWindow::ShowTextFile(){
 	CEdit *pEdit0 = new CEdit();	// CEditオブジェクトポインタpEdit0.
 	
 	// エディットボックスのウィンドウ作成.
-	pEdit0->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 760, 560, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
+	pEdit0->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
 	
 	// テキストのセット.
 	pEdit0->SetText(m_pTextFile->m_tstrText.c_str());	// pEdit0->SetTextでテキストをセット.
@@ -222,10 +222,12 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy){
 	// マルチビューのサイズはウィンドウにぴったり合わせる.
 	if (m_pMultiView != NULL){	// NULLでなければ.
 		MoveWindow(m_pMultiView->m_hWnd, m_pMultiView->m_x, m_pMultiView->m_y, cx, cy, TRUE);	// MoveWindowでm_pMultiView->m_hWndのサイズを変更.
+		CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
+		MoveWindow(pItem0->m_mapChildMap[_T("Edit0")]->m_hWnd, 0, 0, cx, cy, TRUE);	// MoveWindowで"Edit0"をリサイズ.
 	}
 
 	// 画面更新.
-	InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで更新.
+	//InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで更新.
 
 }
 

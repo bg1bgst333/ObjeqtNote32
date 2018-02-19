@@ -182,6 +182,8 @@ void CMultiViewItemsPanel::OnSizeChild(WPARAM wParam, LPARAM lParam){
 	int w = pWindow->m_x + pWindow->m_iWidth;	// 取得したウィンドウの右端を取得.
 	int h = pWindow->m_y + pWindow->m_iHeight;	// 取得したウィンドウの下端を取得.
 
+	// アイテムのサイズによってパネルを拡大する方法はいったん止める.
+#if 0
 	// パネルが小さかったら拡大.
 	if (m_iWidth < w){	// wが大きい.
 		MoveWindow(m_hWnd, m_x, m_y, w, m_iHeight, TRUE);	// MoveWindowで横をwの大きさに拡大.
@@ -189,5 +191,6 @@ void CMultiViewItemsPanel::OnSizeChild(WPARAM wParam, LPARAM lParam){
 	if (m_iHeight < h){	// hが大きい.
 		MoveWindow(m_hWnd, m_x, m_y, m_iWidth, h, TRUE);	// MoveWindowで縦をhの大きさに拡大.
 	}
+#endif
 
 }

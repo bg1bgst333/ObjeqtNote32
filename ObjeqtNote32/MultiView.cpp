@@ -40,7 +40,7 @@ BOOL CMultiView::RegisterClass(HINSTANCE hInstance, HBRUSH hbrBackground){
 BOOL CMultiView::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, int iWidth, int iHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance){
 
 	// ウィンドウの作成.
-	return CUserControl::Create(_T("CMultiView"), lpctszWindowName, dwStyle | WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL, x, y, iWidth, iHeight, hWndParent, hMenu, hInstance);	// CWindow::Createで作成.
+	return CUserControl::Create(_T("CMultiView"), lpctszWindowName, dwStyle | WS_CHILD | WS_VISIBLE /*| WS_HSCROLL | WS_VSCROLL*/, x, y, iWidth, iHeight, hWndParent, hMenu, hInstance);	// CWindow::Createで作成.
 
 }
 
@@ -161,6 +161,8 @@ void CMultiView::OnPaint(){
 	DeleteObject(hBrush);	// ブラシの破棄.
 	DeleteObject(hPen);	// ペンの破棄.
 
+	// アイテムのサイズによってパネルを拡大する方法はいったん止める.
+#if 0
 	// スクロールバー設定.
 	// 水平方向.
 	ZeroMemory(&m_ScrollInfo, sizeof(SCROLLINFO));	// ZeroMemoryでm_ScrollInfoをクリア.
@@ -178,6 +180,7 @@ void CMultiView::OnPaint(){
 	m_ScrollInfo.nMin = 0;	// 最小値
 	m_ScrollInfo.nMax = m_pMultiViewItemsPanel->m_iHeight;	//最大値
 	SetScrollInfo(m_hWnd, SB_VERT, &m_ScrollInfo, TRUE);	// SetScrollInfoでセット.(SetImageのInvalidateRectと第4引数のTRUEがないとスクロールバーつまみが即座に更新されない.)
+#endif
 
 	// 描画終了.
 	EndPaint(m_hWnd, &ps);	// EndPaintで描画終了.
@@ -190,6 +193,17 @@ void CMultiView::OnSize(UINT nType, int cx, int cy){
 	// 親ウィンドウの既定処理.
 	CUserControl::OnSize(nType, cx, cy);	// CUserControl::OnSizeを呼ぶ.
 
+	// マルチビューアイテムズパネルのサイズはウィンドウにぴったり合わせる.
+	if (m_pMultiViewItemsPanel != NULL){	// NULLでなければ.
+		MoveWindow(m_pMultiViewItemsPanel->m_hWnd, m_pMultiViewItemsPanel->m_x, m_pMultiViewItemsPanel->m_y, cx, cy, TRUE);	// MoveWindowでm_pMultiViewItemsPanel->m_hWndのサイズを変更.
+	}
+
+	// 画面更新.
+	//InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで更新.
+
+
+	// アイテムのサイズによってパネルを拡大する方法はいったん止める.
+#if 0
 	// スクロールバー設定.
 	// 水平方向.
 	ZeroMemory(&m_ScrollInfo, sizeof(SCROLLINFO));	// ZeroMemoryでm_ScrollInfoをクリア.
@@ -207,6 +221,7 @@ void CMultiView::OnSize(UINT nType, int cx, int cy){
 	m_ScrollInfo.nMin = 0;	// 最小値
 	m_ScrollInfo.nMax = m_pMultiViewItemsPanel->m_iHeight;	//最大値
 	SetScrollInfo(m_hWnd, SB_VERT, &m_ScrollInfo, TRUE);	// SetScrollInfoでセット.(SetImageのInvalidateRectと第4引数のTRUEがないとスクロールバーつまみが即座に更新されない.)
+#endif
 
 }
 
@@ -310,7 +325,7 @@ void CMultiView::OnHScroll(UINT nSBCode, UINT nPos){
 	// アイテムズパネルの移動.
 	MoveWindow(m_pMultiViewItemsPanel->m_hWnd, 0 - m_iHScrollPos, 0 - m_iVScrollPos, m_pMultiViewItemsPanel->m_iWidth, m_pMultiViewItemsPanel->m_iHeight, TRUE);	// MoveWindowで移動.
 	// 無効領域を作成して画面の更新.
-	InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで無効領域作成.
+	//InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで無効領域作成.
 
 }
 
@@ -398,6 +413,6 @@ void CMultiView::OnVScroll(UINT nSBCode, UINT nPos){
 	// アイテムズパネルの移動.
 	MoveWindow(m_pMultiViewItemsPanel->m_hWnd, 0 - m_iHScrollPos, 0 - m_iVScrollPos, m_pMultiViewItemsPanel->m_iWidth, m_pMultiViewItemsPanel->m_iHeight, TRUE);	// MoveWindowで移動.
 	// 無効領域を作成して画面の更新.
-	InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで無効領域作成.
+	//InvalidateRect(m_hWnd, NULL, TRUE);	// InvalidateRectで無効領域作成.
 
 }
