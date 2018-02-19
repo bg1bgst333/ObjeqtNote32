@@ -41,6 +41,9 @@ class CMainWindow : public CMenuWindow{
 		// メンバ関数バージョン.
 		virtual BOOL Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, int iWidth, int iHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance);	// ウィンドウ作成関数Create.(ウィンドウクラス名省略バージョン.)
 		virtual void Destroy();	// ウィンドウの破棄と終了処理関数Destroy.
+		void InitTextFile();	// テキストファイルの初期化.
+		void InitMultiView();	// マルチビューの初期化.
+		void ShowTextFile();	// テキストファイルの表示.
 		virtual int OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);	// ウィンドウの作成が開始された時.
 		virtual void OnDestroy();	// ウィンドウが破棄された時.
 		virtual void OnSize(UINT nType, int cx, int cy);	// ウィンドウのサイズが変更された時.

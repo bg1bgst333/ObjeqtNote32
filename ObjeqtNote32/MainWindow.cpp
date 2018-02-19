@@ -80,6 +80,72 @@ void CMainWindow::Destroy(){
 
 }
 
+// テキストファイルの初期化.
+void CMainWindow::InitTextFile(){
+
+	// m_pTextFileがあるかどうかで処理が変わる.
+	if (m_pTextFile != NULL){	// m_pTextFileがNULLでない時.
+
+		// いったん閉じる.
+		m_pTextFile->Clear();	// m_pTextFile->Clearでバッファのクリア.
+		m_pTextFile->Close();	// m_pTextFile->Closeでファイルを閉じる.
+
+	}
+	else{	// NULLの時.
+
+		// CTextFileオブジェクトの作成.
+		m_pTextFile = new CTextFile();	// newでCTextFileオブジェクトを作成し, m_pTextFileにポインタを格納.
+
+	}
+
+}
+
+// マルチビューの初期化.
+void CMainWindow::InitMultiView(){
+
+	// m_pMultiViewがあるかどうかで処理が変わる.
+	if (m_pMultiView != NULL){	// m_pMultiViewがNULLでない時.
+
+		// いったん載せているビューたちを削除.
+		m_pMultiView->RemoveAll();	// m_pMultiView->RemoveAllで全て削除.
+
+	}
+	else{	// NULLの時.
+
+		// CMultiViewオブジェクトの作成.
+		m_pMultiView = new CMultiView();	// CMultiViewオブジェクトの作成.
+		m_pMultiView->Create(_T(""), 0, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hWnd, (HMENU)(WM_APP + 1), m_hInstance);	// m_pMultiView->Createで作成.
+		
+	}
+
+}
+
+// テキストファイルの表示.
+void CMainWindow::ShowTextFile(){
+
+	// マルチビューアイテムの追加.
+	m_pMultiView->Add(_T("Item0"), 0, 0, 720, 640, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
+
+	// マルチビューアイテムの取得.
+	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
+
+	// エディットボックスオブジェクトの生成.
+	CEdit *pEdit0 = new CEdit();	// CEditオブジェクトポインタpEdit0.
+	
+	// エディットボックスのウィンドウ作成.
+	pEdit0->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 760, 560, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
+	
+	// テキストのセット.
+	pEdit0->SetText(m_pTextFile->m_tstrText.c_str());	// pEdit0->SetTextでテキストをセット.
+
+	// チャイルドマップへの追加.
+	pItem0->m_mapChildMap.insert(std::make_pair(_T("Edit0"), pEdit0));	// "Edit0"をキー, pEdit0を値として, pItem0->m_mapChildMapに登録.
+
+	// 初回更新タイマーをセット.
+	SetTimer(m_hWnd, 2, 100, NULL);	// SetTimerで更新タイマーをセット.(100ミリ秒==0.1秒)
+
+}
+
 // ウィンドウの作成が開始された時.
 int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 
@@ -127,7 +193,6 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 
 	// 親のOnCreateを呼ぶ.
 	return CMenuWindow::OnCreate(hwnd, lpCreateStruct);	// CMenuWindow::OnCreateを返す.
-
 
 }
 
@@ -239,40 +304,21 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam){
 		// まず, 拡張子でファイル判定をする.
 		if (selDlg.m_tstrExt.compare(_T(".txt")) == 0){	// selDlg.m_tstrExt.compareで".txt"なら.
 
+			// テキストファイルの初期化.
+			InitTextFile();	// InitTextFileで初期化.
+
 			// テキストファイルの読み込み.
-			m_pTextFile = new CTextFile();	// CTextFileオブジェクトを作成し, m_pTextFileに格納.
 			if (m_pTextFile->Read(selDlg.m_tstrPath.c_str())){	// m_pTextFile->Readで読み込み.
 
 				// ShiftJISなら開く.
 				if (m_pTextFile->m_Encoding == CTextFile::ENCODING_SHIFT_JIS){	// ShiftJIS.
 
-					// マルチビューコントロールオブジェクトの作成.
-					m_pMultiView = new CMultiView();	// CMultiViewオブジェクトの作成.
-
-					// マルチビューコントロールのウィンドウ作成.
-					m_pMultiView->Create(_T(""), 0, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hWnd, (HMENU)(WM_APP + 1), m_hInstance);	// m_pMultiView->Createで作成.
-
-					// マルチビューアイテムの追加.
-					m_pMultiView->Add(_T("Item0"), 0, 0, 720, 640, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
-
-					// マルチビューアイテムの取得.
-					CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
-
-					// エディットボックスオブジェクトの生成.
-					CEdit *pEdit0 = new CEdit();	// CEditオブジェクトポインタpEdit0.
+					// マルチビューの初期化.
+					InitMultiView();	// InitMultiViewで初期化.
 					
-					// エディットボックスのウィンドウ作成.
-					pEdit0->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, 760, 560, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
-					
-					// テキストのセット.
-					pEdit0->SetText(m_pTextFile->m_tstrText.c_str());	// pEdit0->SetTextでテキストをセット.
-
-					// チャイルドマップへの追加.
-					pItem0->m_mapChildMap.insert(std::make_pair(_T("Edit0"), pEdit0));	// "Edit0"をキー, pEdit0を値として, pItem0->m_mapChildMapに登録.
-
-					// 初回更新タイマーをセット.
-					SetTimer(m_hWnd, 2, 100, NULL);	// SetTimerで更新タイマーをセット.(100ミリ秒==0.1秒)
-
+					// テキストファイルの表示.
+					ShowTextFile();	// ShowTextFileでm_pTextFileの内容を表示.
+				
 				}
 
 			}
