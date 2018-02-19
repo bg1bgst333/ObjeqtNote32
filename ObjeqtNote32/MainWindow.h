@@ -43,13 +43,14 @@ class CMainWindow : public CMenuWindow{
 		virtual void Destroy();	// ウィンドウの破棄と終了処理関数Destroy.
 		void InitTextFile();	// テキストファイルの初期化.
 		void InitMultiView();	// マルチビューの初期化.
-		void ShowTextFile();	// テキストファイルの表示.
+		void ShowTextFile(LPCTSTR lpctszText);	// テキストファイルの表示.
 		virtual int OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);	// ウィンドウの作成が開始された時.
 		virtual void OnDestroy();	// ウィンドウが破棄された時.
 		virtual void OnSize(UINT nType, int cx, int cy);	// ウィンドウのサイズが変更された時.
 		virtual void OnTimer(UINT_PTR nIDEvent);	// タイマーイベントが発生した時.
 		virtual void OnPaint();	// ウィンドウの描画を要求された時のハンドラOnPaint.
 		virtual int OnClose();	// ウィンドウを閉じた時.
+		virtual int OnFileNewTxt(WPARAM wParam, LPARAM lParam);	// "テキスト文書"を選択された時のハンドラ.
 		virtual int OnFileOpen(WPARAM wParam, LPARAM lParam);	// "開く"を選択された時のハンドラ.
 		virtual int OnFileSaveAs(WPARAM wParam, LPARAM lParam);	// "名前を付けて保存"を選択された時のハンドラ.
 

@@ -121,7 +121,7 @@ void CMainWindow::InitMultiView(){
 }
 
 // テキストファイルの表示.
-void CMainWindow::ShowTextFile(){
+void CMainWindow::ShowTextFile(LPCTSTR lpctszText){
 
 	// マルチビューアイテムの追加.
 	m_pMultiView->Add(_T("Item0"), 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
@@ -136,7 +136,7 @@ void CMainWindow::ShowTextFile(){
 	pEdit0->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
 	
 	// テキストのセット.
-	pEdit0->SetText(m_pTextFile->m_tstrText.c_str());	// pEdit0->SetTextでテキストをセット.
+	pEdit0->SetText(lpctszText);	// pEdit0->SetTextでテキストをセット.
 
 	// チャイルドマップへの追加.
 	pItem0->m_mapChildMap.insert(std::make_pair(_T("Edit0"), pEdit0));	// "Edit0"をキー, pEdit0を値として, pItem0->m_mapChildMapに登録.
@@ -188,6 +188,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 #endif
 
 	// メニューハンドラの追加.
+	AddCommandHandler(ID_FILE_NEW_TXT, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileNewTxt);	// AddCommandHandlerでID_FILE_NEW_TXTに対するハンドラCMainWindow::OnFileNewTxtを登録.
 	AddCommandHandler(ID_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileOpen);	// AddCommandHandlerでID_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
 	AddCommandHandler(ID_FILE_SAVE_AS, 0, (int(CWindow::*)(WPARAM, LPARAM))&CMainWindow::OnFileSaveAs);	// AddCommandHandlerでID_FILE_SAVE_ASに対するハンドラCMainWindow::OnFileSaveAsを登録.
 
@@ -202,6 +203,7 @@ void CMainWindow::OnDestroy(){
 	// メニューハンドラの削除.
 	DeleteCommandHandler(ID_FILE_OPEN, 0);	// DeleteCommandHandlerでID_FILE_OPENのハンドラを削除.
 	DeleteCommandHandler(ID_FILE_SAVE_AS, 0);	// DeleteCommandHandlerでID_FILE_SAVE_ASのハンドラを削除.
+	DeleteCommandHandler(ID_FILE_NEW_TXT, 0);	// DeleteCommandHandlerでID_FILE_NEW_TXTのハンドラを削除.
 
 	// メンバの終了処理
 	//Destroy();	// Destroyでこのウィンドウの終了処理をする.
@@ -296,6 +298,23 @@ int CMainWindow::OnClose(){
 
 }
 
+// "テキスト文書"を選択された時のハンドラ.
+int CMainWindow::OnFileNewTxt(WPARAM wParam, LPARAM lParam){
+
+	// テキストファイルの初期化.
+	InitTextFile();	// InitTextFileで初期化.
+
+	// マルチビューの初期化.
+	InitMultiView();	// InitMultiViewで初期化.
+	
+	// テキストファイルの表示.
+	ShowTextFile(_T(""));	// ShowTextFileで""をセット.
+
+	// 処理したので0.
+	return 0;	// 0を返す.
+
+}
+
 // "開く"を選択された時のハンドラ.
 int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam){
 
@@ -319,7 +338,7 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam){
 					InitMultiView();	// InitMultiViewで初期化.
 					
 					// テキストファイルの表示.
-					ShowTextFile();	// ShowTextFileでm_pTextFileの内容を表示.
+					ShowTextFile(m_pTextFile->m_tstrText.c_str());	// ShowTextFileでm_pTextFileの内容を表示.
 				
 				}
 

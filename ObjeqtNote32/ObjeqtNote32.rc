@@ -50,8 +50,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,0,0,24
- PRODUCTVERSION 0,0,0,24
+ FILEVERSION 0,0,0,25
+ PRODUCTVERSION 0,0,0,25
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x29L
@@ -66,10 +66,10 @@ BEGIN
     BEGIN
         BLOCK "041104b0"
         BEGIN
-            VALUE "Comments", "Ogikubo #24"
+            VALUE "Comments", "Ogikubo #25"
             VALUE "CompanyName", "B.G-STATION"
-            VALUE "FileDescription", "Ogikubo #24"
-            VALUE "FileVersion", "0, 0, 0, 24"
+            VALUE "FileDescription", "Ogikubo #25"
+            VALUE "FileVersion", "0, 0, 0, 25"
             VALUE "InternalName", "ObjeqtNote32"
             VALUE "LegalCopyright", "Copyright (C) 2005-2017 B.G-STATION, All rights reserved."
             VALUE "LegalTrademarks", "B.G-STATION"
@@ -96,6 +96,10 @@ IDR_MENU1 MENU
 BEGIN
     POPUP "ファイル(&F)"
     BEGIN
+        POPUP "新規作成(&N)"
+        BEGIN
+            MENUITEM "テキスト文書(.txt)",                ID_FILE_NEW_TXT
+        END
         MENUITEM "開く(&O)...",                   ID_FILE_OPEN
         MENUITEM "名前を付けて保存(&A)...",             ID_FILE_SAVE_AS
     END
