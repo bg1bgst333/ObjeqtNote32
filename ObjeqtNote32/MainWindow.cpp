@@ -341,8 +341,15 @@ int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam){
 	CFileDialog selDlg(NULL, _T("*"), _T("テキスト文書(*.txt)|*.txt|すべてのファイル(*.*)|*.*||"), OFN_OVERWRITEPROMPT);	// CFileDialogオブジェクトselDlgを定義.
 	if (selDlg.ShowSaveFileDialog(m_hWnd)){	// selDlg.ShowSaveFileDialogで"名前を付けて保存"ファイルダイアログを表示.
 
-		// 選択されたファイルパスを表示.
-		MessageBox(m_hWnd, selDlg.m_tstrPath.c_str(), _T("ObjeqtNote"), MB_OK | MB_ICONASTERISK);	// MessageBoxでselDlg.m_tstrPathを表示.
+		// テキストファイルの書き込み.
+		if (m_pTextFile != NULL){	// m_pTextFileがNULLでないなら.
+
+			// マルチビューアイテム0番を取得.
+			CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
+			m_pTextFile->SetText(pItem0->m_mapChildMap[_T("Edit0")]->GetText());	// "Edit0"のテキストをセット.
+			m_pTextFile->Write(selDlg.m_tstrPath.c_str());	// m_tstrPathに書き込み.
+
+		}
 
 	}
 	
