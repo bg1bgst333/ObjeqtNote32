@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ComboBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CustomControl.cpp"
 				>
 			</File>
@@ -264,6 +268,10 @@
 			</File>
 			<File
 				RelativePath=".\c_string_utility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ComboBox.h"
 				>
 			</File>
 			<File

@@ -8,6 +8,7 @@
 // 独自のヘッダ
 #include "MenuWindow.h"	// CMenuWindow
 #include "MultiView.h"	// CMultiView
+#include "ComboBox.h"	// CComboBox
 #include "Edit.h"	// CEdit
 #include "TextFile.h"	// CTextFile
 #include "resource.h"	// リソース.

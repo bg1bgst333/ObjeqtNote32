@@ -124,22 +124,35 @@ void CMainWindow::InitMultiView(){
 void CMainWindow::ShowTextFile(LPCTSTR lpctszText){
 
 	// マルチビューアイテムの追加.
-	m_pMultiView->Add(_T("Item0"), 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
+	m_pMultiView->Add(_T("Item0"), 0, 0, m_iClientAreaWidth, 25, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
+	m_pMultiView->Add(_T("Item1"), 0, 25, m_iClientAreaWidth, m_iClientAreaHeight - 25, m_hInstance);	// m_pMultiView->Addで"Item1"を追加.
 
 	// マルチビューアイテムの取得.
 	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
+	CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+
+	// コンボボックスオブジェクトの生成.
+	CComboBox *pComboBox0 = new CComboBox();	// CComboBoxオブジェクトポインタpComboBox0.
+
+	// コンボボックスのウィンドウ生成.
+	pComboBox0->Create(_T(""), CBS_SORT | CBS_DROPDOWNLIST, 0, 0, m_iClientAreaWidth, 300, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// pComboBox0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
+
+	// アイテムの追加.
+	pComboBox0->AddString(_T("Shift_JIS"));	// pComboBox0->AddStringで"Shift_JIS"を追加.
+	pComboBox0->AddString(_T("Unicode"));	// pComboBox0->AddStringで"Unicode"を追加.
 
 	// エディットボックスオブジェクトの生成.
-	CEdit *pEdit0 = new CEdit();	// CEditオブジェクトポインタpEdit0.
+	CEdit *pEdit1 = new CEdit();	// CEditオブジェクトポインタpEdit1.
 	
 	// エディットボックスのウィンドウ作成.
-	pEdit0->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// m_pEdit0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
+	pEdit1->Create(_T(""), WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight - 25, pItem1->m_hWnd, (HMENU)WM_APP + 201, m_hInstance);	// pEdit1->CreateでpItem1->m_hWndを親としてウィンドウ作成.
 	
 	// テキストのセット.
-	pEdit0->SetText(lpctszText);	// pEdit0->SetTextでテキストをセット.
+	pEdit1->SetText(lpctszText);	// pEdit1->SetTextでテキストをセット.
 
 	// チャイルドマップへの追加.
-	pItem0->m_mapChildMap.insert(std::make_pair(_T("Edit0"), pEdit0));	// "Edit0"をキー, pEdit0を値として, pItem0->m_mapChildMapに登録.
+	pItem0->m_mapChildMap.insert(std::make_pair(_T("ComboBox0"), pComboBox0));	// "ComboBox0"をキー, pComboBox0を値として, pItem0->m_mapChildMapに登録.
+	pItem1->m_mapChildMap.insert(std::make_pair(_T("Edit1"), pEdit1));	// "Edit1"をキー, pEdit1を値として, pItem1->m_mapChildMapに登録.
 
 	// 初回更新タイマーをセット.
 	SetTimer(m_hWnd, 2, 100, NULL);	// SetTimerで更新タイマーをセット.(100ミリ秒==0.1秒)
@@ -225,7 +238,9 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy){
 	if (m_pMultiView != NULL){	// NULLでなければ.
 		MoveWindow(m_pMultiView->m_hWnd, m_pMultiView->m_x, m_pMultiView->m_y, cx, cy, TRUE);	// MoveWindowでm_pMultiView->m_hWndのサイズを変更.
 		CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
-		MoveWindow(pItem0->m_mapChildMap[_T("Edit0")]->m_hWnd, 0, 0, cx, cy, TRUE);	// MoveWindowで"Edit0"をリサイズ.
+		CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+		MoveWindow(pItem0->m_mapChildMap[_T("ComboBox0")]->m_hWnd, 0, 0, cx, 300, TRUE);	// MoveWindowで"ComboBox0"をリサイズ.
+		MoveWindow(pItem1->m_mapChildMap[_T("Edit1")]->m_hWnd, 0, 0, cx, cy - 25, TRUE);	// MoveWindowで"Edit1"をリサイズ.
 	}
 
 	// 画面更新.
@@ -363,9 +378,12 @@ int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam){
 		// テキストファイルの書き込み.
 		if (m_pTextFile != NULL){	// m_pTextFileがNULLでないなら.
 
-			// マルチビューアイテム0番を取得.
+			// 各アイテムを取得.
 			CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
-			m_pTextFile->SetText(pItem0->m_mapChildMap[_T("Edit0")]->GetText());	// "Edit0"のテキストをセット.
+			CComboBox *pComboBox0 = (CComboBox *)(pItem0->m_mapChildMap[_T("ComboBox0")]);	// pComboBox0を取得.
+			CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+			CEdit *pEdit1 = (CEdit *)(pItem1->m_mapChildMap[_T("Edit1")]);	// pEdit1を取得.
+			m_pTextFile->SetText(pEdit1->GetText());	// "Edit1"のテキストをセット.
 			m_pTextFile->Write(selDlg.m_tstrPath.c_str());	// m_tstrPathに書き込み.
 
 		}
