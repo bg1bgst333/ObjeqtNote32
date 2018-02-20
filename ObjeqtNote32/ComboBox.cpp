@@ -31,6 +31,14 @@ void CComboBox::AddString(LPCTSTR lpctszStr){
 
 }
 
+// コンボボックスの指定のインデックス要素を選択SetCurSel.
+void CComboBox::SetCurSel(int iIndex){
+
+	// 指定の要素をセット.
+	SendMessage(m_hWnd, CB_SETCURSEL, (WPARAM)iIndex, 0);	// SendMessageでCB_SETCURSELを送ることで指定の要素を選択.
+
+}
+
 // ウィンドウの作成が開始された時.
 int CComboBox::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 

@@ -141,6 +141,14 @@ void CMainWindow::ShowTextFile(LPCTSTR lpctszText){
 	pComboBox0->AddString(_T("Shift_JIS"));	// pComboBox0->AddStringで"Shift_JIS"を追加.
 	pComboBox0->AddString(_T("Unicode"));	// pComboBox0->AddStringで"Unicode"を追加.
 
+	// アイテムの選択.
+	if (m_pTextFile->m_Encoding == CTextFile::ENCODING_UNICODE){	// Unicode.
+		pComboBox0->SetCurSel(1);	// Unicodeなら1番目を選択.
+	}
+	else{	// それ以外はShift_JIS.
+		pComboBox0->SetCurSel(0);	// Shift_JISなら0番目を選択.
+	}
+
 	// エディットボックスオブジェクトの生成.
 	CEdit *pEdit1 = new CEdit();	// CEditオブジェクトポインタpEdit1.
 	
@@ -346,16 +354,11 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam){
 			// テキストファイルの読み込み.
 			if (m_pTextFile->Read(selDlg.m_tstrPath.c_str())){	// m_pTextFile->Readで読み込み.
 
-				// ShiftJISなら開く.
-				if (m_pTextFile->m_Encoding == CTextFile::ENCODING_SHIFT_JIS){	// ShiftJIS.
-
-					// マルチビューの初期化.
-					InitMultiView();	// InitMultiViewで初期化.
+				// マルチビューの初期化.
+				InitMultiView();	// InitMultiViewで初期化.
 					
-					// テキストファイルの表示.
-					ShowTextFile(m_pTextFile->m_tstrText.c_str());	// ShowTextFileでm_pTextFileの内容を表示.
-				
-				}
+				// テキストファイルの表示.
+				ShowTextFile(m_pTextFile->m_tstrText.c_str());	// ShowTextFileでm_pTextFileの内容を表示.
 
 			}
 			

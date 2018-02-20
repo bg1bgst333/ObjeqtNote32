@@ -19,6 +19,7 @@ class CComboBox : public CCustomControl{
 		// メンバ関数
 		virtual BOOL Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, int iWidth, int iHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance);	// ウィンドウ作成関数Create.(ウィンドウクラス名省略バージョン.)
 		void AddString(LPCTSTR lpctszStr);	// コンボボックスに文字列を追加する関数AddString.
+		void SetCurSel(int iIndex);	// コンボボックスの指定のインデックス要素を選択SetCurSel.
 		virtual int OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);	// ウィンドウの作成が開始された時.
 		virtual void OnSize(UINT nType, int cx, int cy);	// ウィンドウのサイズが変更された時.
 
