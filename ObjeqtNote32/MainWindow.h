@@ -45,6 +45,7 @@ class CMainWindow : public CMenuWindow{
 		void InitTextFile();	// テキストファイルの初期化.
 		void InitMultiView();	// マルチビューの初期化.
 		void ShowTextFile(LPCTSTR lpctszText);	// テキストファイルの表示.
+		void SaveTextFile(LPCTSTR lpctszPath);	// テキストファイルの保存.
 		virtual int OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);	// ウィンドウの作成が開始された時.
 		virtual void OnDestroy();	// ウィンドウが破棄された時.
 		virtual void OnSize(UINT nType, int cx, int cy);	// ウィンドウのサイズが変更された時.

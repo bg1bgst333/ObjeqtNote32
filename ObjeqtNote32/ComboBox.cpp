@@ -39,6 +39,14 @@ void CComboBox::SetCurSel(int iIndex){
 
 }
 
+// コンボボックスで選択されている要素のインデックスを返すGetCurSel.
+int CComboBox::GetCurSel(){
+
+	// 選択されている要素のインデックスを返す.
+	return (int)SendMessage(m_hWnd, CB_GETCURSEL, 0, 0);	// SendMessageでCB_GETCURSELを送ることで選択された要素のインデックスを取得.
+
+}
+
 // ウィンドウの作成が開始された時.
 int CComboBox::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 

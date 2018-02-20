@@ -167,6 +167,26 @@ void CMainWindow::ShowTextFile(LPCTSTR lpctszText){
 
 }
 
+// テキストファイルの保存.
+void CMainWindow::SaveTextFile(LPCTSTR lpctszPath){
+
+	// 各アイテムを取得.
+	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
+	CComboBox *pComboBox0 = (CComboBox *)(pItem0->m_mapChildMap[_T("ComboBox0")]);	// pComboBox0を取得.
+	CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+	CEdit *pEdit1 = (CEdit *)(pItem1->m_mapChildMap[_T("Edit1")]);	// pEdit1を取得.
+	m_pTextFile->SetText(pEdit1->GetText());	// "Edit1"のテキストをセット.
+	int iIndex = pComboBox0->GetCurSel();	// 選択されている文字コード要素を取得.
+	if (iIndex == 1){	// Unicode.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UNICODE;	// Unicode.
+	}
+	else{	// Shift_JIS.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_SHIFT_JIS;	// Shift_JIS.
+	}
+	m_pTextFile->Write(lpctszPath);	// lpctszPathに書き込み.
+
+}
+
 // ウィンドウの作成が開始された時.
 int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct){
 
@@ -381,13 +401,8 @@ int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam){
 		// テキストファイルの書き込み.
 		if (m_pTextFile != NULL){	// m_pTextFileがNULLでないなら.
 
-			// 各アイテムを取得.
-			CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
-			CComboBox *pComboBox0 = (CComboBox *)(pItem0->m_mapChildMap[_T("ComboBox0")]);	// pComboBox0を取得.
-			CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
-			CEdit *pEdit1 = (CEdit *)(pItem1->m_mapChildMap[_T("Edit1")]);	// pEdit1を取得.
-			m_pTextFile->SetText(pEdit1->GetText());	// "Edit1"のテキストをセット.
-			m_pTextFile->Write(selDlg.m_tstrPath.c_str());	// m_tstrPathに書き込み.
+			// テキストファイルの保存.
+			SaveTextFile(selDlg.m_tstrPath.c_str());	// SaveTextFileでm_tstrPathが指すファイルに内容を保存.
 
 		}
 
