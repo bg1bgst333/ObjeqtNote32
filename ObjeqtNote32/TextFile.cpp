@@ -98,7 +98,7 @@ void CTextFile::ConvertNewLine(tstring &tstrText, CTextFile::NEW_LINE dest, CTex
 	if (src == CTextFile::NEW_LINE_CRLF){	// CRLF
 		before = _T("\r\n");	// beforeに"\r\n"をセット.
 	}
-	else if (src = CTextFile::NEW_LINE_LF){	// LF
+	else if (src == CTextFile::NEW_LINE_LF){	// LF
 		before = _T("\n");	// beforeに"\n"をセット.
 	}
 	else if (src == CTextFile::NEW_LINE_CR){	// CR
@@ -114,7 +114,9 @@ void CTextFile::ConvertNewLine(tstring &tstrText, CTextFile::NEW_LINE dest, CTex
 	else if (dest == CTextFile::NEW_LINE_CR){	// CR
 		after = _T("\r");	// afterに"\r"をセット.
 	}
-	class_cpp_string_utility::replace(tstrText, before, after);	// replaceで置換.
+	if (before != after){	// beforeとafterが違う時.
+		class_cpp_string_utility::replace(tstrText, before, after);	// replaceで置換.
+	}
 
 }
 
