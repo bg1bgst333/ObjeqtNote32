@@ -1,6 +1,7 @@
 // ヘッダのインクルード
 // 独自のヘッダ
 #include "TextFile.h"	// CTextFile
+#include "cpp_string_utility.h"	// class_cpp_string_utility
 
 // コンストラクタCTextFile
 CTextFile::CTextFile() : CBinaryFile(){
@@ -9,6 +10,7 @@ CTextFile::CTextFile() : CBinaryFile(){
 	m_tstrText.clear();	// m_tstrText.clearでクリア.
 	m_Encoding = ENCODING_NONE;	// m_EncodingをENCODING_NONEで初期化.
 	m_Bom = BOM_NONE;	// m_BomをBOM_NONEで初期化.
+	m_NewLine = NEW_LINE_NONE;	// m_NewLineをNEW_LINE_NONEで初期化.
 
 }
 
@@ -32,6 +34,34 @@ CTextFile::BOM CTextFile::CheckBom(){
 		m_Bom = BOM_NONE;	// BOM_NONEをセット.
 	}
 	return m_Bom;	// m_Bomを返す.
+
+}
+
+// 改行のチェック.
+CTextFile::NEW_LINE CTextFile::CheckNewLine(){
+
+	// まずCR('\r')を探す.
+	size_t f = m_tstrText.find_first_of(_T('\r'));	// '\r'の位置をfに格納.
+	if (f != -1 && f < m_tstrText.length() - 1){	// f('\r')が見つかった場合.
+		if (m_tstrText[f + 1] == '\n'){	// 次が'\n'の場合.
+			m_NewLine = NEW_LINE_CRLF;	// NEW_LINE_CRLFをセット.
+		}
+		else{	// '\r'だけ.
+			m_NewLine = NEW_LINE_CR;	// NEW_LINE_CRをセット.
+		}
+	}
+	else{	// '\r'はないので, '\n'を探す.
+		f = m_tstrText.find_first_of(_T('\n'));	// '\n'の位置をfに格納.
+		if (f != -1){	// f('\n')が見つかった場合.
+			m_NewLine = NEW_LINE_LF;	// NEW_LINE_LFをセット.
+		}
+		else{	// '\n'もない.
+			m_NewLine = NEW_LINE_NONE;	// NEW_LINE_NONEをセット.
+		}
+	}
+
+	// 改行コードを返す.
+	return m_NewLine;	// を返す.
 
 }
 
@@ -60,6 +90,34 @@ void CTextFile::DecodeShiftJis(){
 
 }
 
+// 改行コードの変換.
+void CTextFile::ConvertNewLine(tstring &tstrText, CTextFile::NEW_LINE dest, CTextFile::NEW_LINE src){
+
+	// 改行コードを置き換える.
+	tstring before;	// 置換前before.
+	if (src == CTextFile::NEW_LINE_CRLF){	// CRLF
+		before = _T("\r\n");	// beforeに"\r\n"をセット.
+	}
+	else if (src = CTextFile::NEW_LINE_LF){	// LF
+		before = _T("\n");	// beforeに"\n"をセット.
+	}
+	else if (src == CTextFile::NEW_LINE_CR){	// CR
+		before = _T("\r");	// beforeに"\r"をセット.
+	}
+	tstring after;	// 置換後after.
+	if (dest == CTextFile::NEW_LINE_CRLF){	// CRLF
+		after = _T("\r\n");	// afterに"\r\n"をセット.
+	}
+	else if (dest = CTextFile::NEW_LINE_LF){	// LF
+		after = _T("\n");	// afterに"\n"をセット.
+	}
+	else if (dest == CTextFile::NEW_LINE_CR){	// CR
+		after = _T("\r");	// afterに"\r"をセット.
+	}
+	class_cpp_string_utility::replace(tstrText, before, after);	// replaceで置換.
+
+}
+
 // 指定のテキストファイルを全部一斉読み込み.
 BOOL CTextFile::Read(LPCTSTR lpctszFileName){
 
@@ -73,13 +131,14 @@ BOOL CTextFile::Read(LPCTSTR lpctszFileName){
 		if (m_Bom == BOM_UTF16LE){	// UTF-16LE.
 			m_Encoding = ENCODING_UNICODE;	// Unicode.
 			DecodeUtf16LE();	// DecodeUtf16LEでバイト列をテキストに変換.
-			return TRUE;	// TRUEを返す.
 		}
 		else{	// Shift_Jis.
 			m_Encoding = ENCODING_SHIFT_JIS;	// Shift_Jis.
 			DecodeShiftJis();	// DecodeShiftJisでバイト列をテキストに変換.
-			return TRUE;	// TRUEを返す.
 		}
+		CheckNewLine();	// 改行コードのチェック.
+		ConvertNewLine(m_tstrText, CTextFile::NEW_LINE_CRLF, m_NewLine);	// ConvertNewLineでCRLFに変換.
+		return TRUE;	// TRUEを返す.
 	}
 
 	// FALSE.
@@ -130,6 +189,7 @@ BOOL CTextFile::Write(LPCTSTR lpctszFileName){
 	tstring tstrTemp = m_tstrText;	// tstrTempにm_tstrTextを格納.
 	ENCODING encoding = m_Encoding;	// encodingにm_Encodingを格納.
 	BOM bom = m_Bom;	// bomにm_Bomを格納.
+	NEW_LINE newline = m_NewLine;	// newlineにm_NewLineを格納.
 
 	// ファイルとバッファをクリアする.
 	Close();	// ファイルを閉じる.
@@ -139,6 +199,7 @@ BOOL CTextFile::Write(LPCTSTR lpctszFileName){
 	m_tstrText = tstrTemp;	// m_tstrTextにtstrTempを格納.
 	m_Encoding = encoding;	// m_Encodingにencodingを格納.
 	m_Bom = bom;	// m_Bomにbomを格納.
+	m_NewLine = newline;	// m_NewLineにnewlineを格納.
 
 	// 文字コードのチェック.
 	if (encoding == ENCODING_UNICODE){	// Unicode.
@@ -164,6 +225,7 @@ void CTextFile::Clear(){
 	m_tstrText.clear();	// m_tstrText.clearでクリア.
 	m_Encoding = ENCODING_NONE;	// m_EncodingにENCODING_NONEをセット.
 	m_Bom = BOM_NONE;	// m_BomにBOM_NONEをセット.
+	m_NewLine = NEW_LINE_NONE;	// m_NewLineにNEW_LINE_NONEをセット.
 
 	// 親クラスのClearを呼ぶ.
 	CBinaryFile::Clear();	// CBinaryFile::Clearでバッファなどをクリア.
