@@ -201,12 +201,24 @@ void CMainWindow::SaveTextFile(LPCTSTR lpctszPath){
 	CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
 	CEdit *pEdit1 = (CEdit *)(pItem1->m_mapChildMap[_T("Edit1")]);	// pEdit1を取得.
 	m_pTextFile->SetText(pEdit1->GetText());	// "Edit1"のテキストをセット.
-	int iIndex = pComboBox0->GetCurSel();	// 選択されている文字コード要素を取得.
-	if (iIndex == 1){	// Unicode.
+	CMultiViewItem *pItem2 = m_pMultiView->Get(2);	// 2番目を取得.
+	CComboBox *pComboBox2 = (CComboBox *)(pItem2->m_mapChildMap[_T("ComboBox2")]);	// pComboBox2を取得.
+	int iIdxEncoding = pComboBox0->GetCurSel();	// 選択されている文字コード要素を取得.
+	if (iIdxEncoding == 1){	// Unicode.
 		m_pTextFile->m_Encoding = CTextFile::ENCODING_UNICODE;	// Unicode.
 	}
 	else{	// Shift_JIS.
 		m_pTextFile->m_Encoding = CTextFile::ENCODING_SHIFT_JIS;	// Shift_JIS.
+	}
+	int iIdxNewLine = pComboBox2->GetCurSel();	// 選択されている改行コード要素を取得.
+	if (iIdxNewLine == 2){	// CR.
+		m_pTextFile->m_NewLine = CTextFile::NEW_LINE_CR;	// CR.
+	}
+	else if (iIdxNewLine == 1){	// LF.
+		m_pTextFile->m_NewLine = CTextFile::NEW_LINE_LF;	// LF.
+	}
+	else{	// CRLF.
+		m_pTextFile->m_NewLine = CTextFile::NEW_LINE_CRLF;	// CRLF.
 	}
 	m_pTextFile->Write(lpctszPath);	// lpctszPathに書き込み.
 

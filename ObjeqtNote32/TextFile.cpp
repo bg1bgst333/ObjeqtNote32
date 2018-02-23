@@ -108,7 +108,7 @@ void CTextFile::ConvertNewLine(tstring &tstrText, CTextFile::NEW_LINE dest, CTex
 	if (dest == CTextFile::NEW_LINE_CRLF){	// CRLF
 		after = _T("\r\n");	// afterに"\r\n"をセット.
 	}
-	else if (dest = CTextFile::NEW_LINE_LF){	// LF
+	else if (dest == CTextFile::NEW_LINE_LF){	// LF
 		after = _T("\n");	// afterに"\n"をセット.
 	}
 	else if (dest == CTextFile::NEW_LINE_CR){	// CR
@@ -203,20 +203,27 @@ BOOL CTextFile::Write(LPCTSTR lpctszFileName){
 	m_Bom = bom;	// m_Bomにbomを格納.
 	m_NewLine = newline;	// m_NewLineにnewlineを格納.
 
-	// 文字コードのチェック.
-	if (encoding == ENCODING_UNICODE){	// Unicode.
-		EncodeUtf16LEWithBom(m_tstrText);	// テキスト文字列をUTF-16LEバイト列に変換,
-		CBinaryFile::Write(lpctszFileName);	// CBinaryFile:Writeで書き込み.
-		return TRUE;	// TRUEを返す.
+	// 改行コードのチェック.(CRLFなら変更しない.)
+	if (newline == NEW_LINE_CR){	// CR.
+		ConvertNewLine(tstrTemp, NEW_LINE_CR, NEW_LINE_CRLF);	// ConverNewLineでCRLFからCRに変換.
 	}
-	else{	// Shift_JIS.
-		EncodeShiftJis(m_tstrText);	// テキスト文字列をShift_JISバイト列に変換.
-		CBinaryFile::Write(lpctszFileName);	// CBinaryFile:Writeで書き込み.
-		return TRUE;	// TRUEを返す.
+	else if (newline == NEW_LINE_LF){	// LF.
+		ConvertNewLine(tstrTemp, NEW_LINE_LF, NEW_LINE_CRLF);	// ConverNewLineでCRLFからLFに変換.
 	}
 
-	// FALSE.
-	return FALSE;	// FAlSEを返す.
+	// 文字コードのチェック.
+	if (encoding == ENCODING_UNICODE){	// Unicode.
+		EncodeUtf16LEWithBom(tstrTemp);	// テキスト文字列をUTF-16LEバイト列に変換,
+	}
+	else{	// Shift_JIS.
+		EncodeShiftJis(tstrTemp);	// テキスト文字列をShift_JISバイト列に変換.
+	}
+
+	// 書き込み.
+	CBinaryFile::Write(lpctszFileName);	// CBinaryFile:Writeで書き込み.
+
+	// TRUE.
+	return TRUE;	// TRUEを返す.
 
 }
 
