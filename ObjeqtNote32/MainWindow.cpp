@@ -125,17 +125,19 @@ void CMainWindow::ShowTextFile(LPCTSTR lpctszText){
 
 	// マルチビューアイテムの追加.
 	m_pMultiView->Add(_T("Item0"), 0, 0, m_iClientAreaWidth, 25, m_hInstance);	// m_pMultiView->Addで"Item0"を追加.
-	m_pMultiView->Add(_T("Item1"), 0, 25, m_iClientAreaWidth, m_iClientAreaHeight - 25, m_hInstance);	// m_pMultiView->Addで"Item1"を追加.
+	m_pMultiView->Add(_T("Item1"), 0, 25, m_iClientAreaWidth, m_iClientAreaHeight - 50, m_hInstance);	// m_pMultiView->Addで"Item1"を追加.
+	m_pMultiView->Add(_T("Item2"), 0, m_iClientAreaHeight - 25, m_iClientAreaWidth, 25, m_hInstance);	// m_pMultiView->Addで"Item2"を追加.
 
 	// マルチビューアイテムの取得.
 	CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
 	CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+	CMultiViewItem *pItem2 = m_pMultiView->Get(2);	// 2番目を取得.
 
 	// コンボボックスオブジェクトの生成.
 	CComboBox *pComboBox0 = new CComboBox();	// CComboBoxオブジェクトポインタpComboBox0.
 
 	// コンボボックスのウィンドウ生成.
-	pComboBox0->Create(_T(""), CBS_SORT | CBS_DROPDOWNLIST, 0, 0, m_iClientAreaWidth, 300, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// pComboBox0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
+	pComboBox0->Create(_T(""), CBS_DROPDOWNLIST, 0, 0, m_iClientAreaWidth, 300, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);	// pComboBox0->CreateでpItem0->m_hWndを親としてウィンドウ作成.
 
 	// アイテムの追加.
 	pComboBox0->AddString(_T("Shift_JIS"));	// pComboBox0->AddStringで"Shift_JIS"を追加.
@@ -153,14 +155,37 @@ void CMainWindow::ShowTextFile(LPCTSTR lpctszText){
 	CEdit *pEdit1 = new CEdit();	// CEditオブジェクトポインタpEdit1.
 	
 	// エディットボックスのウィンドウ作成.
-	pEdit1->Create(_T(""), WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight - 25, pItem1->m_hWnd, (HMENU)WM_APP + 201, m_hInstance);	// pEdit1->CreateでpItem1->m_hWndを親としてウィンドウ作成.
+	pEdit1->Create(_T(""), WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL, 0, 0, m_iClientAreaWidth, m_iClientAreaHeight - 50, pItem1->m_hWnd, (HMENU)WM_APP + 201, m_hInstance);	// pEdit1->CreateでpItem1->m_hWndを親としてウィンドウ作成.
 	
 	// テキストのセット.
 	pEdit1->SetText(lpctszText);	// pEdit1->SetTextでテキストをセット.
 
+	// コンボボックスオブジェクトの生成.
+	CComboBox *pComboBox2 = new CComboBox();	// CComboBoxオブジェクトポインタpComboBox2.
+
+	// コンボボックスのウィンドウ生成.
+	pComboBox2->Create(_T(""), CBS_DROPDOWNLIST, 0, 0, m_iClientAreaWidth, 300, pItem2->m_hWnd, (HMENU)WM_APP + 202, m_hInstance);	// pComboBox2->CreateでpItem2->m_hWndを親としてウィンドウ作成.
+
+	// アイテムの追加.
+	pComboBox2->AddString(_T("CRLF"));	// pComboBox2->AddStringで"CRLF"を追加.
+	pComboBox2->AddString(_T("LF"));	// pComboBox2->AddStringで"LF"を追加.
+	pComboBox2->AddString(_T("CR"));	// pComboBox2->AddStringで"CR"を追加.
+
+	// アイテムの選択.
+	if (m_pTextFile->m_NewLine == CTextFile::NEW_LINE_CR){	// CR.
+		pComboBox2->SetCurSel(2);	// CRなら2番目を選択.
+	}
+	else if (m_pTextFile->m_NewLine == CTextFile::NEW_LINE_LF){	// LF.
+		pComboBox2->SetCurSel(1);	// LFなら1番目を選択.
+	}
+	else{	// それ以外はCRLF.
+		pComboBox2->SetCurSel(0);	// CRLFなら0番目を選択.
+	}
+
 	// チャイルドマップへの追加.
 	pItem0->m_mapChildMap.insert(std::make_pair(_T("ComboBox0"), pComboBox0));	// "ComboBox0"をキー, pComboBox0を値として, pItem0->m_mapChildMapに登録.
 	pItem1->m_mapChildMap.insert(std::make_pair(_T("Edit1"), pEdit1));	// "Edit1"をキー, pEdit1を値として, pItem1->m_mapChildMapに登録.
+	pItem2->m_mapChildMap.insert(std::make_pair(_T("ComboBox2"), pComboBox2));	// "ComboBox2"をキー, pComboBox2を値として, pItem2->m_mapChildMapに登録.
 
 	// 初回更新タイマーをセット.
 	SetTimer(m_hWnd, 2, 100, NULL);	// SetTimerで更新タイマーをセット.(100ミリ秒==0.1秒)
@@ -267,8 +292,10 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy){
 		MoveWindow(m_pMultiView->m_hWnd, m_pMultiView->m_x, m_pMultiView->m_y, cx, cy, TRUE);	// MoveWindowでm_pMultiView->m_hWndのサイズを変更.
 		CMultiViewItem *pItem0 = m_pMultiView->Get(0);	// 0番目を取得.
 		CMultiViewItem *pItem1 = m_pMultiView->Get(1);	// 1番目を取得.
+		CMultiViewItem *pItem2 = m_pMultiView->Get(2);	// 2番目を取得.
 		MoveWindow(pItem0->m_mapChildMap[_T("ComboBox0")]->m_hWnd, 0, 0, cx, 300, TRUE);	// MoveWindowで"ComboBox0"をリサイズ.
-		MoveWindow(pItem1->m_mapChildMap[_T("Edit1")]->m_hWnd, 0, 0, cx, cy - 25, TRUE);	// MoveWindowで"Edit1"をリサイズ.
+		MoveWindow(pItem1->m_mapChildMap[_T("Edit1")]->m_hWnd, 0, 0, cx, cy - 50, TRUE);	// MoveWindowで"Edit1"をリサイズ.
+		MoveWindow(pItem2->m_mapChildMap[_T("ComboBox2")]->m_hWnd, 0, 0, cx, 300, TRUE);	// MoveWindowで"ComboBox2"をリサイズ.
 	}
 
 	// 画面更新.
