@@ -139,7 +139,9 @@ BOOL CTextFile::Read(LPCTSTR lpctszFileName){
 			DecodeShiftJis();	// DecodeShiftJisでバイト列をテキストに変換.
 		}
 		CheckNewLine();	// 改行コードのチェック.
-		ConvertNewLine(m_tstrText, CTextFile::NEW_LINE_CRLF, m_NewLine);	// ConvertNewLineでCRLFに変換.
+		if (m_NewLine != NEW_LINE_NONE){	// 改行なしではない場合.
+			ConvertNewLine(m_tstrText, CTextFile::NEW_LINE_CRLF, m_NewLine);	// ConvertNewLineでCRLFに変換.
+		}
 		return TRUE;	// TRUEを返す.
 	}
 
