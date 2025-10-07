@@ -2,6 +2,7 @@
 // 独自のヘッダ
 #include "resource.h"	// リソース
 #include "MainWindow.h"	// CMainWindow
+#include "FileDialog.h"	// CFileDialog
 
 // ウィンドウクラス登録関数RegisterClass.
 BOOL CMainWindow::RegisterClass(HINSTANCE hInstance) {
@@ -125,6 +126,13 @@ int CMainWindow::OnClose() {
 
 // "開く"が選択された時.
 int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
+
+	// "開く"ダイアログ
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, _T("テキストファイル(*.txt)|*.txt|すべてのファイル(*.*)|*.*||"));
+	INT_PTR ret = dlg.DoModal();
+	if (ret == IDOK) {
+		MessageBox(m_hWnd, dlg.GetOFN().lpstrFile, _T("ObjeqtNote32"), MB_OK);	// 選択したファイルのファイルパスを表示.
+	}
 
 	// 0を返す.
 	return 0;	// 処理したので0.
