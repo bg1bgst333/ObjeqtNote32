@@ -151,7 +151,9 @@
     <ClCompile Include="MainApplication.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MultiView.cpp" />
     <ClCompile Include="string_utility_cstring.c" />
+    <ClCompile Include="UserControl.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
@@ -162,8 +164,10 @@
     <ClInclude Include="MainApplication.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="MultiView.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="string_utility_cstring.h" />
+    <ClInclude Include="UserControl.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
