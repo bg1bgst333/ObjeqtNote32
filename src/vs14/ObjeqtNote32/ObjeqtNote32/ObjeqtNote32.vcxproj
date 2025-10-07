@@ -159,7 +159,11 @@
     <ClInclude Include="MainApplication.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ObjeqtNote32.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

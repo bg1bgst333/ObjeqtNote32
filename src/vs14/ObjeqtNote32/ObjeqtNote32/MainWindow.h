@@ -14,6 +14,7 @@ class CMainWindow : public CWindow {
 
 		// メンバ変数
 		HINSTANCE m_hInstance;	// インスタンスハンドルm_hInstance
+		CMenu* m_pMainMenu;	// CMenuオブジェクトポインタm_pMainMenu.
 
 		// staticメンバ関数
 		static BOOL RegisterClass(HINSTANCE hInstance);	// ウィンドウクラス登録関数RegisterClass.
@@ -27,6 +28,7 @@ class CMainWindow : public CWindow {
 		virtual int OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct);	// ウィンドウの作成が開始された時.
 		virtual void OnDestroy();	// ウィンドウが破棄された時.
 		virtual int OnClose();	// ウィンドウが閉じられる時.
+		int OnFileOpen(WPARAM wParam, LPARAM lParam);	// "開く"が選択された時.
 
 };
 

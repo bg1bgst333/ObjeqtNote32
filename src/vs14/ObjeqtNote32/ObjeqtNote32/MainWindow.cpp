@@ -1,5 +1,6 @@
 // ヘッダのインクルード
 // 独自のヘッダ
+#include "resource.h"	// リソース
 #include "MainWindow.h"	// CMainWindow
 
 // ウィンドウクラス登録関数RegisterClass.
@@ -15,6 +16,7 @@ CMainWindow::CMainWindow() {
 
 	// メンバの初期化.
 	m_hInstance = NULL;	// m_hInstanceをNULLで初期化.
+	m_pMainMenu = NULL;	// m_pMainMenuをNULLで初期化.
 
 }
 
@@ -74,12 +76,30 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 	// 親クラスのOnCreateを呼ぶ.
 	m_hInstance = lpCreateStruct->hInstance;
 	int iRet = CWindow::OnCreate(hwnd, lpCreateStruct);	// CWindow::OnCreateを呼び, 戻り値を返す.
+	m_pMainMenu = CWindow::GetMenu();	// CWindow::GetMenuでm_pMainMenu取得.
+	if (m_pMainMenu == NULL) {	// メニューハンドルが無い場合は, m_pMainMenuがNULLになる.
+		m_pMainMenu = new CMenu();
+		BOOL bRet = m_pMainMenu->LoadMenu(lpCreateStruct->hInstance, IDM_MAINMENU);	// IDM_MAINMENUをロード.
+		if (bRet) {
+			SetMenu(m_pMainMenu);	// CWindow::SetMenuでm_pMainMenuをセット.
+			// メニューハンドラの追加.
+			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);	// AddCommandHandlerでID_ITEM_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
+		}
+	}
+
 	return iRet;
 
 }
 
 // ウィンドウが破棄された時.
 void CMainWindow::OnDestroy() {
+
+	// メニューハンドラの削除.
+	DeleteCommandHandler(ID_ITEM_FILE_OPEN, 0);	// DeleteCommandHandlerでID_ITEM_FILE_OPENのハンドラを削除.
+
+	// メニューの終了処理.
+	CMenu::DeleteMenuHandleMap();
+	m_pMainMenu = NULL;
 
 	// CWindowのOnDestroyを呼ぶ.
 	CWindow::OnDestroy();	// CWindow::OnDestroyを呼ぶ.
@@ -100,5 +120,13 @@ int CMainWindow::OnClose() {
 
 	// OKなので閉じる.
 	return CWindow::OnClose();	// 親クラスのOnCloseを呼ぶ.(親クラスのOnCloseは常に閉じる処理になっている.)
+
+}
+
+// "開く"が選択された時.
+int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
+
+	// 0を返す.
+	return 0;	// 処理したので0.
 
 }
