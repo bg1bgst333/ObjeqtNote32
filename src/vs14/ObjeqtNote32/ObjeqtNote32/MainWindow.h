@@ -5,6 +5,7 @@
 // ヘッダのインクルード
 // 独自のヘッダ
 #include "Window.h"	// CWindow
+#include "MultiView.h"	// CMultiView
 
 // メインウィンドウクラスCMainWindow
 class CMainWindow : public CWindow {
@@ -15,6 +16,7 @@ class CMainWindow : public CWindow {
 		// メンバ変数
 		HINSTANCE m_hInstance;	// インスタンスハンドルm_hInstance
 		CMenu* m_pMainMenu;	// CMenuオブジェクトポインタm_pMainMenu.
+		CMultiView* m_pMultiView;	// CMultiViewオブジェクトポインタm_pMultiView.
 
 		// staticメンバ関数
 		static BOOL RegisterClass(HINSTANCE hInstance);	// ウィンドウクラス登録関数RegisterClass.

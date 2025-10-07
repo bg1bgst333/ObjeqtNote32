@@ -18,6 +18,7 @@ CMainWindow::CMainWindow() {
 	// メンバの初期化.
 	m_hInstance = NULL;	// m_hInstanceをNULLで初期化.
 	m_pMainMenu = NULL;	// m_pMainMenuをNULLで初期化.
+	m_pMultiView = NULL;
 
 }
 
@@ -61,6 +62,13 @@ BOOL CMainWindow::DestroyChildren() {
 	// 変数の初期化.
 	BOOL bRet = FALSE;	// bRetをFALSEで初期化.
 
+	// メンバの終了処理.
+	if (m_pMultiView != NULL) {
+		bRet = m_pMultiView->Destroy();
+		delete m_pMultiView;
+		m_pMultiView = NULL;
+	}
+
 	// 破棄したらTRUEを返す.
 	if (bRet) {	// TRUEなら.
 		return TRUE;	// TRUEを返す.
@@ -85,6 +93,9 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 			SetMenu(m_pMainMenu);	// CWindow::SetMenuでm_pMainMenuをセット.
 			// メニューハンドラの追加.
 			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);	// AddCommandHandlerでID_ITEM_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
+			// CMultiViewの生成.
+			m_pMultiView = new CMultiView();
+			m_pMultiView->Create(_T(""), WS_BORDER, 0, 0, 640, 480, hwnd, (HMENU)IDC_MULTIVIEW, m_hInstance);
 		}
 	}
 
