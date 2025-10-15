@@ -95,7 +95,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);	// AddCommandHandler‚ÅID_ITEM_FILE_OPEN‚É‘Î‚·‚éƒnƒ“ƒhƒ‰CMainWindow::OnFileOpen‚ð“o˜^.
 			// CMultiView‚Ì¶¬.
 			m_pMultiView = new CMultiView();
-			m_pMultiView->Create(_T(""), WS_BORDER, 0, 0, 640, 480, hwnd, (HMENU)IDC_MULTIVIEW, m_hInstance);
+			m_pMultiView->Create(_T(""), 0, 0, 0, 640, 480, hwnd, (HMENU)IDC_MULTIVIEW, m_hInstance);
 		}
 	}
 
