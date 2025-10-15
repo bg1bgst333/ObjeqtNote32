@@ -8,7 +8,8 @@ BOOL CMainApplication::InitInstance(HINSTANCE hInstance, LPTSTR lpCmdLine, int n
 
 	// ウィンドウクラスの登録.
 	CMainWindow::RegisterClass(hInstance);
-	CMultiView::RegisterClass(hInstance);
+	m_hBrush = CreateSolidBrush(RGB(0xff, 0, 0));	// 赤ブラシの生成.
+	CMultiView::RegisterClass(hInstance, m_hBrush);	// 赤いCMultiViewの登録.
 
 	// CMainWindowオブジェクトの作成.
 	m_pMainWnd = new CMainWindow();	// CMainWindowオブジェクトを作成し, m_pMainWndに格納.
@@ -26,5 +27,16 @@ BOOL CMainApplication::InitInstance(HINSTANCE hInstance, LPTSTR lpCmdLine, int n
 
 	// TRUEを返す.
 	return TRUE;	// returnでTRUEを返す.
+
+}
+
+// 終了処理関数ExitInstance.
+int CMainApplication::ExitInstance() {
+
+	// 赤ブラシの解放.
+	DeleteObject(m_hBrush);
+
+	// 親クラスのExitInstanceを呼ぶ.
+	return CApplication::ExitInstance();
 
 }

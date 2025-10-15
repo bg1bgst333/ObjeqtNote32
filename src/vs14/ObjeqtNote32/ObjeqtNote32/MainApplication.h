@@ -12,8 +12,12 @@ class CMainApplication : public CApplication {
 	// publicメンバ
 	public:
 
-	// publicメンバ関数
-	virtual BOOL InitInstance(HINSTANCE hInstance, LPTSTR lpCmdLine, int nShowCmd);	// インスタンス初期化関数InitInstance.
+		// publicメンバ変数
+		HBRUSH m_hBrush;
+			
+		// publicメンバ関数
+		virtual BOOL InitInstance(HINSTANCE hInstance, LPTSTR lpCmdLine, int nShowCmd);	// インスタンス初期化関数InitInstance.
+		virtual int ExitInstance();	// 終了処理関数ExitInstance.
 
 };
 
