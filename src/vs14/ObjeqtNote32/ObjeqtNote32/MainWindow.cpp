@@ -1,8 +1,13 @@
 // ヘッダのインクルード
+// 既定のヘッダ
+#include <windows.h>	// 標準WindowsAPI
+#include <stdio.h>	// C標準入出力
+#include <commctrl.h>	// コモンコントロール
 // 独自のヘッダ
-#include "resource.h"	// リソース
 #include "MainWindow.h"	// CMainWindow
 #include "FileDialog.h"	// CFileDialog
+#include "ComboBox.h"	// CComboBox
+#include "resource.h"
 
 // ウィンドウクラス登録関数RegisterClass.
 BOOL CMainWindow::RegisterClass(HINSTANCE hInstance) {
@@ -12,12 +17,20 @@ BOOL CMainWindow::RegisterClass(HINSTANCE hInstance) {
 
 }
 
+// ウィンドウクラス登録関数RegisterClass.(メニュー名指定バージョン)
+BOOL CMainWindow::RegisterClass(HINSTANCE hInstance, LPCTSTR lpctszMenuName) {
+
+	// メニュー名はlpctszMenuName.
+	return CWindow::RegisterClass(hInstance, _T("CMainWindow"), lpctszMenuName);	// CWindow::RegisterClassで, ウィンドウクラス名"CMainWindow", メニュー名lpctszMenuNameを登録.
+
+}
+
 // コンストラクタCMainWindow()
 CMainWindow::CMainWindow() {
 
 	// メンバの初期化.
-	m_hInstance = NULL;	// m_hInstanceをNULLで初期化.
-	m_pMainMenu = NULL;	// m_pMainMenuをNULLで初期化.
+	m_hInstance = NULL;
+	m_pMainMenu = NULL;
 	m_pMultiView = NULL;
 
 }
@@ -35,6 +48,14 @@ BOOL CMainWindow::Create(LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, 
 
 	// ウィンドウクラス名は"CMainWindow".
 	return CWindow::Create(_T("CMainWindow"), lpctszWindowName, dwStyle, x, y, iWidth, iHeight, hWndParent, hMenu, hInstance);	// CWindow::Createにウィンドウクラス名"CMainWindow"を指定.
+
+}
+
+// ウィンドウ作成関数CreateEx.
+BOOL CMainWindow::CreateEx(DWORD dwExStyle, LPCTSTR lpctszWindowName, DWORD dwStyle, int x, int y, int iWidth, int iHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance) {
+
+	// ウィンドウクラス名は"CMainWindow".
+	return CWindow::CreateEx(dwExStyle, _T("CMainWindow"), lpctszWindowName, dwStyle, x, y, iWidth, iHeight, hWndParent, hMenu, hInstance);	// CWindow::CreateExにウィンドウクラス名"CMainWindow"を指定.
 
 }
 
@@ -84,22 +105,36 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 
 	// 親クラスのOnCreateを呼ぶ.
 	m_hInstance = lpCreateStruct->hInstance;
-	int iRet = CWindow::OnCreate(hwnd, lpCreateStruct);	// CWindow::OnCreateを呼び, 戻り値を返す.
-	m_pMainMenu = CWindow::GetMenu();	// CWindow::GetMenuでm_pMainMenu取得.
+	int iRet = CWindow::OnCreate(hwnd, lpCreateStruct);	// CWindow::OnCreateを呼び, 戻り値をiRetに格納.
+	m_pMainMenu = GetMenu();	// CWindow::GetMenuでm_pMainMenu取得.
 	if (m_pMainMenu == NULL) {	// メニューハンドルが無い場合は, m_pMainMenuがNULLになる.
 		m_pMainMenu = new CMenu();
-		BOOL bRet = m_pMainMenu->LoadMenu(lpCreateStruct->hInstance, IDM_MAINMENU);	// IDM_MAINMENUをロード.
+		BOOL bRet = m_pMainMenu->LoadMenu(lpCreateStruct->hInstance, IDM_MAINMENU);
 		if (bRet) {
-			SetMenu(m_pMainMenu);	// CWindow::SetMenuでm_pMainMenuをセット.
-			// メニューハンドラの追加.
-			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);	// AddCommandHandlerでID_ITEM_FILE_OPENに対するハンドラCMainWindow::OnFileOpenを登録.
+			SetMenu(m_pMainMenu);
+			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);
 			// CMultiViewの生成.
+			RECT rc = { 0 };
+			GetClientRect(hwnd, &rc);
 			m_pMultiView = new CMultiView();
-			m_pMultiView->Create(_T(""), 0, 0, 0, 640, 480, hwnd, (HMENU)IDC_MULTIVIEW, m_hInstance);
+			m_pMultiView->Create(_T(""), 0, 0, 0, rc.right - rc.left, rc.bottom - rc.top, hwnd, (HMENU)IDC_MULTIVIEW, m_hInstance);
+			// アイテムの追加.
+			m_pMultiView->Add(_T("Item0"), 0, 0, rc.right - rc.left, 25, m_hInstance);
+			// マルチビューアイテムの取得.
+			CMultiViewItem* pItem0 = m_pMultiView->Get(0);
+			// マルチビューアイテム内にコンボボックス1を配置.
+			CComboBox* pComboBox1 = new CComboBox();
+			pComboBox1->Create(_T("Item0-ComboBox1"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 100, pItem0->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);
+			pItem0->m_mapChildMap.insert(std::make_pair(_T("Item0-ComboBox1"), pComboBox1));
+			// コンボボックスに文字列アイテムを追加
+			pComboBox1->AddString(_T("あいうえお"));
+			pComboBox1->AddString(_T("かきくけこ"));
+			pComboBox1->AddString(_T("さしすせそ"));
+			// 2番目の"さしすせそ"にセット.
+			pComboBox1->SetCurSel(2);
 		}
 	}
-
-	return iRet;
+	return iRet;	// iRetを返す.
 
 }
 
@@ -107,7 +142,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 void CMainWindow::OnDestroy() {
 
 	// メニューハンドラの削除.
-	DeleteCommandHandler(ID_ITEM_FILE_OPEN, 0);	// DeleteCommandHandlerでID_ITEM_FILE_OPENのハンドラを削除.
+	DeleteCommandHandler(ID_ITEM_FILE_OPEN, 0);
 
 	// メニューの終了処理.
 	CMenu::DeleteMenuHandleMap();
@@ -115,6 +150,16 @@ void CMainWindow::OnDestroy() {
 
 	// CWindowのOnDestroyを呼ぶ.
 	CWindow::OnDestroy();	// CWindow::OnDestroyを呼ぶ.
+
+}
+
+// ウィンドウのサイズが変更された時.
+void CMainWindow::OnSize(UINT nType, int cx, int cy) {
+
+	// マルチビューをメインウィンドウのクライアント領域サイズにリサイズ.
+	if (m_pMultiView != NULL) {
+		m_pMultiView->MoveWindow(0, 0, cx, cy);
+	}
 
 }
 
@@ -135,16 +180,26 @@ int CMainWindow::OnClose() {
 
 }
 
-// "開く"が選択された時.
+// 開くが選択された時.
 int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 
 	// "開く"ダイアログ
-	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, _T("テキストファイル(*.txt)|*.txt|すべてのファイル(*.*)|*.*||"));
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, _T("Text Files(*.txt)|*.txt|All Files(*.*)|*.*||"));
 	INT_PTR ret = dlg.DoModal();
 	if (ret == IDOK) {
-		MessageBox(m_hWnd, dlg.GetOFN().lpstrFile, _T("ObjeqtNote32"), MB_OK);	// 選択したファイルのファイルパスを表示.
+		MessageBox(m_hWnd, dlg.GetFileExt().c_str(), _T("ObjeqtNote32"), MB_OK);
 	}
-
+	/*
+	// マルチビューアイテムの取得.
+	CMultiViewItem *pItem0 = m_pMultiView->Get(0);
+	// コンボボックスの取得.
+	CComboBox *pComboBox1 = (CComboBox *)pItem0->m_mapChildMap[_T("Item0-ComboBox1")];
+	// 選択されたインデックスの取得と表示.
+	int idx = pComboBox1->GetCurSel();
+	TCHAR tszIdx[16] = {0};
+	_stprintf(tszIdx, _T("idx = %d"), idx);
+	MessageBox(m_hWnd, tszIdx, _T("CComboBox"), MB_OK);
+	*/
 	// 0を返す.
 	return 0;	// 処理したので0.
 
