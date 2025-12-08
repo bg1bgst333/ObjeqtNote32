@@ -152,6 +152,7 @@
     <ClCompile Include="BinaryFile.cpp" />
     <ClCompile Include="ComboBox.cpp" />
     <ClCompile Include="CustomControl.cpp" />
+    <ClCompile Include="EditCore.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="FileDialog.cpp" />
     <ClCompile Include="file_utility_cstdio.c" />
@@ -173,6 +174,7 @@
     <ClInclude Include="BinaryFile.h" />
     <ClInclude Include="ComboBox.h" />
     <ClInclude Include="CustomControl.h" />
+    <ClInclude Include="EditCore.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="FileDialog.h" />
     <ClInclude Include="file_utility_cstdio.h" />
