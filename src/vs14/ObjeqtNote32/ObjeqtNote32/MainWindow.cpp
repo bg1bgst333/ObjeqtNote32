@@ -6,7 +6,8 @@
 // 独自のヘッダ
 #include "MainWindow.h"	// CMainWindow
 #include "FileDialog.h"	// CFileDialog
-#include "ComboBox.h"	// CComboBox
+#include "EncodingComboBox.h"	// CComboBox
+#include "EditCore.h"	// CEditCore
 #include "resource.h"
 
 // ウィンドウクラス登録関数RegisterClass.
@@ -152,6 +153,11 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy) {
 	// マルチビューをメインウィンドウのクライアント領域サイズにリサイズ.
 	if (m_pMultiView != NULL) {
 		m_pMultiView->MoveWindow(0, 0, cx, cy);
+		CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
+		if (pItemEncodingComboBox != NULL) {
+			CComboBox* pEncodingComboBox = (CComboBox*)pItemEncodingComboBox->m_mapChildMap[_T("MVIEncodingComboBox-EncodingComboBox")];
+			pEncodingComboBox->MoveWindow(0, 0, cx, 25);
+		}
 	}
 
 }
@@ -187,12 +193,12 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 			GetClientRect(m_hWnd, &rc);
 			m_pMultiView->Add(_T("MVIEncodingComboBox"), 0, 0, rc.right - rc.left, 25, m_hInstance);
 			m_pMultiView->Add(_T("MVIBomComboBox"), 0, 25, rc.right - rc.left, 25, m_hInstance);
-			//m_pMultiView->Add(_T("MVIContentEditBox"), 0, 50, rc.right - rc.left, 25, m_hInstance);
-			//m_pMultiView->Add(_T("MVINewLineComboBox"), 0, 75, rc.right - rc.left, 25, m_hInstance);
+			m_pMultiView->Add(_T("MVIContentEditBox"), 0, 50, rc.right - rc.left, rc.bottom - rc.top - 75, m_hInstance);
+			m_pMultiView->Add(_T("MVINewLineComboBox"), 0, rc.bottom - rc.top - 25, rc.right - rc.left, 25, m_hInstance);
 			// マルチビューアイテム内にコントロールを配置.
 			// 文字コードコンボボックス
 			CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
-			CComboBox* pEncodingComboBox = new CComboBox();
+			CComboBox* pEncodingComboBox = new CEncodingComboBox();
 			pEncodingComboBox->Create(_T("MVIEncodingComboBox-EncodingComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemEncodingComboBox->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);
 			pItemEncodingComboBox->m_mapChildMap.insert(std::make_pair(_T("MVIEncodingComboBox-EncodingComboBox"), pEncodingComboBox));
 			// BOMコンボボックス
@@ -200,6 +206,16 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 			CComboBox* pBomComboBox = new CComboBox();
 			pBomComboBox->Create(_T("MVIBomComboBox-BomComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemBomComboBox->m_hWnd, (HMENU)WM_APP + 201, m_hInstance);
 			pItemBomComboBox->m_mapChildMap.insert(std::make_pair(_T("MVIBomComboBox-BomComboBox"), pBomComboBox));
+			// コンテントエディットボックス
+			CMultiViewItem *pItemContentEditBox = m_pMultiView->Get(2);
+			CEditCore *pContentEditBox = new CEditCore();
+			pContentEditBox->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL | WS_BORDER, 0, 0, rc.right - rc.left, rc.bottom - rc.top - 75, pItemContentEditBox->m_hWnd, (HMENU)WM_APP + 202, m_hInstance);
+			pItemContentEditBox->m_mapChildMap.insert(std::make_pair(_T("MVIContentEditBox-ContentEditBox"), pContentEditBox));
+			// 改行コンボボックス
+			CMultiViewItem* pItemNewLineComboBox = m_pMultiView->Get(3);
+			CComboBox* pNewLineComboBox = new CComboBox();
+			pNewLineComboBox->Create(_T("MVINewLineComboBox-NewLineComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemNewLineComboBox->m_hWnd, (HMENU)WM_APP + 202, m_hInstance);
+			pItemNewLineComboBox->m_mapChildMap.insert(std::make_pair(_T("MVINewLineComboBox-NewLineComboBox"), pNewLineComboBox));
 			// 文字コードコンボボックスに文字列アイテムを追加
 			pEncodingComboBox->AddString(_T("Shift_JIS"));
 			pEncodingComboBox->AddString(_T("UTF-16LE"));
@@ -212,6 +228,10 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 			pBomComboBox->AddString(_T("UTF-16BE BOM"));
 			pBomComboBox->AddString(_T("UTF-8 BOM"));
 			pBomComboBox->AddString(_T("なし"));
+			// 改行コンボボックスに文字列アイテムを追加
+			pNewLineComboBox->AddString(_T("CRLF"));
+			pNewLineComboBox->AddString(_T("LF"));
+			pNewLineComboBox->AddString(_T("CR"));
 			// テキストファイルの読み込み.
 			if (m_pTextFile == NULL) {
 				m_pTextFile = new CTextFile();
@@ -249,6 +269,18 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 				}
 				else {
 					pBomComboBox->SetCurSel(3);
+				}
+				// ファイル内容
+				pContentEditBox->SetWindowText(m_pTextFile->m_tstrText.c_str());
+				// 改行
+				if (m_pTextFile->m_NewLine == CTextFile::NEW_LINE_CR) {
+					pNewLineComboBox->SetCurSel(2);
+				}
+				else if (m_pTextFile->m_NewLine == CTextFile::NEW_LINE_LF) {
+					pNewLineComboBox->SetCurSel(1);
+				}
+				else{
+					pNewLineComboBox->SetCurSel(0);
 				}
 			}
 		}
