@@ -6,7 +6,7 @@
 // 独自のヘッダ
 #include "MainWindow.h"	// CMainWindow
 #include "FileDialog.h"	// CFileDialog
-#include "ComboBox.h"	// CComboBox
+#include "EncodingComboBox.h"	// CComboBox
 #include "EditCore.h"	// CEditCore
 #include "resource.h"
 
@@ -153,6 +153,11 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy) {
 	// マルチビューをメインウィンドウのクライアント領域サイズにリサイズ.
 	if (m_pMultiView != NULL) {
 		m_pMultiView->MoveWindow(0, 0, cx, cy);
+		CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
+		if (pItemEncodingComboBox != NULL) {
+			CComboBox* pEncodingComboBox = (CComboBox*)pItemEncodingComboBox->m_mapChildMap[_T("MVIEncodingComboBox-EncodingComboBox")];
+			pEncodingComboBox->MoveWindow(0, 0, cx, 25);
+		}
 	}
 
 }
@@ -193,7 +198,7 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 			// マルチビューアイテム内にコントロールを配置.
 			// 文字コードコンボボックス
 			CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
-			CComboBox* pEncodingComboBox = new CComboBox();
+			CComboBox* pEncodingComboBox = new CEncodingComboBox();
 			pEncodingComboBox->Create(_T("MVIEncodingComboBox-EncodingComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemEncodingComboBox->m_hWnd, (HMENU)WM_APP + 200, m_hInstance);
 			pItemEncodingComboBox->m_mapChildMap.insert(std::make_pair(_T("MVIEncodingComboBox-EncodingComboBox"), pEncodingComboBox));
 			// BOMコンボボックス
