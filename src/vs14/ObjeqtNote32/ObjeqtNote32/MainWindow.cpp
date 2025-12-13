@@ -121,6 +121,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 		if (bRet) {
 			SetMenu(m_pMainMenu);
 			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);
+			AddCommandHandler(ID_ITEM_FILE_SAVEAS, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileSaveAs);
 			// CMultiViewの生成.
 			RECT rc = { 0 };
 			GetClientRect(hwnd, &rc);
@@ -136,6 +137,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 void CMainWindow::OnDestroy() {
 
 	// メニューハンドラの削除.
+	DeleteCommandHandler(ID_ITEM_FILE_SAVEAS, 0);
 	DeleteCommandHandler(ID_ITEM_FILE_OPEN, 0);
 
 	// メニューの終了処理.
@@ -181,7 +183,7 @@ int CMainWindow::OnClose() {
 
 }
 
-// 開くが選択された時.
+// "開く"が選択された時.
 int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 
 	// "開く"ダイアログ
@@ -284,6 +286,57 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 				else{
 					pNewLineComboBox->SetCurSel(0);
 				}
+			}
+		}
+	}
+
+	// 0を返す.
+	return 0;	// 処理したので0.
+
+}
+
+// "名前を付けて保存"が選択された時.
+int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam) {
+
+	// "名前を付けて保存"ダイアログ
+	CFileDialog dlg(FALSE, NULL, NULL, OFN_OVERWRITEPROMPT, _T("テキストファイル(*.txt)|*.txt|すべてのファイル(*.*)|*.*||"));
+	INT_PTR ret = dlg.DoModal();
+	if (ret == IDOK) {
+		if (dlg.GetFileExt() == _T("txt")) {
+			// テキストファイルをセーブする.
+			// 文字コードコンボボックス
+			CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
+			if (pItemEncodingComboBox != NULL) {
+				CComboBox* pEncodingComboBox = (CComboBox *)pItemEncodingComboBox->m_mapChildMap[_T("MVIEncodingComboBox-EncodingComboBox")];
+				int iEnc = pEncodingComboBox->GetCurSel();
+				if (iEnc == 1) {
+					m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_16LE;
+				}
+				else if (iEnc == 2) {
+					m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_16BE;
+				}
+				else if (iEnc == 3) {
+					m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_8;
+				}
+				else if (iEnc == 0) {
+					m_pTextFile->m_Encoding = CTextFile::ENCODING_SHIFT_JIS;
+				}
+				else if (iEnc == 4) {
+					m_pTextFile->m_Encoding = CTextFile::ENCODING_EUC_JP;
+				}
+				else {
+					m_pTextFile->m_Encoding = CTextFile::ENCODING_JIS;
+				}
+			}
+			// コンテントエディットボックス
+			CMultiViewItem *pItemContentEditBox = m_pMultiView->Get(2);
+			if (pItemContentEditBox != NULL) {
+				CEditCore *pContentEditBox = (CEditCore *)pItemContentEditBox->m_mapChildMap[_T("MVIContentEditBox-ContentEditBox")];
+				tstring tstrText;	// 一時的にテキストを格納しておくtstringオブジェクトtstrText.
+				pContentEditBox->GetWindowText(tstrText);
+				// ここでファイルを保存する.
+				m_pTextFile->SetText(tstrText);	// tstrTextをm_pTextFileにセット.
+				m_pTextFile->Write(dlg.GetOFN().lpstrFile);	// dlg.GetOFN().lpstrFileに書き込み.
 			}
 		}
 	}
