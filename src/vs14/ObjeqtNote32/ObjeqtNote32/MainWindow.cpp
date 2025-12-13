@@ -153,11 +153,13 @@ void CMainWindow::OnSize(UINT nType, int cx, int cy) {
 	// マルチビューをメインウィンドウのクライアント領域サイズにリサイズ.
 	if (m_pMultiView != NULL) {
 		m_pMultiView->MoveWindow(0, 0, cx, cy);
+		/*
 		CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
 		if (pItemEncodingComboBox != NULL) {
 			CComboBox* pEncodingComboBox = (CComboBox*)pItemEncodingComboBox->m_mapChildMap[_T("MVIEncodingComboBox-EncodingComboBox")];
 			pEncodingComboBox->MoveWindow(0, 0, cx, 25);
 		}
+		*/
 	}
 
 }
