@@ -328,6 +328,24 @@ int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam) {
 					m_pTextFile->m_Encoding = CTextFile::ENCODING_JIS;
 				}
 			}
+			// BOMコンボボックス
+			CMultiViewItem* pItemBomComboBox = m_pMultiView->Get(1);
+			if (pItemBomComboBox != NULL) {
+				CComboBox* pBomComboBox = (CComboBox *)pItemBomComboBox->m_mapChildMap[_T("MVIBomComboBox-BomComboBox")];
+				int iBom = pBomComboBox->GetCurSel();
+				if (iBom == 0) {
+					m_pTextFile->m_Bom = CTextFile::BOM_UTF16LE;
+				}
+				else if (iBom == 1) {
+					m_pTextFile->m_Bom = CTextFile::BOM_UTF16BE;
+				}
+				else if (iBom == 2) {
+					m_pTextFile->m_Bom = CTextFile::BOM_UTF8;
+				}
+				else {
+					m_pTextFile->m_Bom = CTextFile::BOM_NONE;
+				}
+			}
 			// コンテントエディットボックス
 			CMultiViewItem *pItemContentEditBox = m_pMultiView->Get(2);
 			if (pItemContentEditBox != NULL) {
