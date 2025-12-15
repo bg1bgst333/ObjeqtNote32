@@ -346,6 +346,21 @@ int CMainWindow::OnFileSaveAs(WPARAM wParam, LPARAM lParam) {
 					m_pTextFile->m_Bom = CTextFile::BOM_NONE;
 				}
 			}
+			// 改行コンボボックス
+			CMultiViewItem* pItemNewLineComboBox = m_pMultiView->Get(3);
+			if (pItemNewLineComboBox != NULL) {
+				CComboBox* pNewLineComboBox = (CComboBox *)pItemNewLineComboBox->m_mapChildMap[_T("MVINewLineComboBox-NewLineComboBox")];
+				int iNewLine = pNewLineComboBox->GetCurSel();
+				if (iNewLine == 2) {
+					m_pTextFile->m_NewLine = CTextFile::NEW_LINE_CR;
+				}
+				else if (iNewLine == 1) {
+					m_pTextFile->m_NewLine = CTextFile::NEW_LINE_LF;
+				}
+				else {
+					m_pTextFile->m_NewLine = CTextFile::NEW_LINE_CRLF;
+				}
+			}
 			// コンテントエディットボックス
 			CMultiViewItem *pItemContentEditBox = m_pMultiView->Get(2);
 			if (pItemContentEditBox != NULL) {
