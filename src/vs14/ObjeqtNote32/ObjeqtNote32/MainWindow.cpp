@@ -123,6 +123,7 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 			SetMenu(m_pMainMenu);
 			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);
 			AddCommandHandler(ID_ITEM_FILE_SAVEAS, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileSaveAs);
+			AddCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChange);
 			// CMultiViewの生成.
 			RECT rc = { 0 };
 			GetClientRect(hwnd, &rc);
@@ -185,6 +186,17 @@ int CMainWindow::OnClose() {
 
 }
 
+// コンボボックスのアイテム選択が変更された時.
+int CMainWindow::OnCbnSelChange(WPARAM wParam, LPARAM lParam) {
+
+	// デバッグメッセージ.
+	OutputDebugString(_T("CMainWindow::OnCbnSelChange\n"));
+
+	// 0を返す.
+	return 0;	// 処理したので0.
+
+}
+
 // "開く"が選択された時.
 int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 
@@ -207,7 +219,7 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 			CComboBox* pEncodingComboBox = new CComboBox();//new CEncodingComboBox();
 			pEncodingComboBox->Create(_T("MVIEncodingComboBox-EncodingComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemEncodingComboBox->m_hWnd, (HMENU)ID_CTRL_START + 0, m_hInstance);
 			pItemEncodingComboBox->m_mapChildMap.insert(std::make_pair(_T("MVIEncodingComboBox-EncodingComboBox"), pEncodingComboBox));
-			AddCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CWindow::OnCbnSelChange);
+			//AddCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChange);
 			// BOMコンボボックス
 			CMultiViewItem* pItemBomComboBox = m_pMultiView->Get(1);
 			CComboBox* pBomComboBox = new CComboBox();
