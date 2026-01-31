@@ -123,7 +123,9 @@ int CMainWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct) {
 			SetMenu(m_pMainMenu);
 			AddCommandHandler(ID_ITEM_FILE_OPEN, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileOpen);
 			AddCommandHandler(ID_ITEM_FILE_SAVEAS, 0, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnFileSaveAs);
-			AddCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChange);
+			AddCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChangeEnc);
+			AddCommandHandler(ID_CTRL_START + 1, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChangeBom);
+			AddCommandHandler(ID_CTRL_START + 3, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChangeNewLine);
 			// CMultiViewの生成.
 			RECT rc = { 0 };
 			GetClientRect(hwnd, &rc);
@@ -142,6 +144,8 @@ void CMainWindow::OnDestroy() {
 	DeleteCommandHandler(ID_ITEM_FILE_SAVEAS, 0);
 	DeleteCommandHandler(ID_ITEM_FILE_OPEN, 0);
 	DeleteCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE);
+	DeleteCommandHandler(ID_CTRL_START + 1, CBN_SELCHANGE);
+	DeleteCommandHandler(ID_CTRL_START + 3, CBN_SELCHANGE);
 
 	// メニューの終了処理.
 	CMenu::DeleteMenuHandleMap();
@@ -186,11 +190,33 @@ int CMainWindow::OnClose() {
 
 }
 
-// コンボボックスのアイテム選択が変更された時.
-int CMainWindow::OnCbnSelChange(WPARAM wParam, LPARAM lParam) {
+// 文字コードコンボボックスのアイテム選択が変更された時.
+int CMainWindow::OnCbnSelChangeEnc(WPARAM wParam, LPARAM lParam) {
 
 	// デバッグメッセージ.
-	OutputDebugString(_T("CMainWindow::OnCbnSelChange\n"));
+	OutputDebugString(_T("CMainWindow::OnCbnSelChangeEnc\n"));
+
+	// 0を返す.
+	return 0;	// 処理したので0.
+
+}
+
+// BOMコンボボックスのアイテム選択が変更された時.
+int CMainWindow::OnCbnSelChangeBom(WPARAM wParam, LPARAM lParam) {
+
+	// デバッグメッセージ.
+	OutputDebugString(_T("CMainWindow::OnCbnSelChangeBom\n"));
+
+	// 0を返す.
+	return 0;	// 処理したので0.
+
+}
+
+// 改行コンボボックスのアイテム選択が変更された時.
+int CMainWindow::OnCbnSelChangeNewLine(WPARAM wParam, LPARAM lParam) {
+
+	// デバッグメッセージ.
+	OutputDebugString(_T("CMainWindow::OnCbnSelChangeNewLine\n"));
 
 	// 0を返す.
 	return 0;	// 処理したので0.
@@ -217,23 +243,23 @@ int CMainWindow::OnFileOpen(WPARAM wParam, LPARAM lParam) {
 			// 文字コードコンボボックス
 			CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
 			CComboBox* pEncodingComboBox = new CComboBox();//new CEncodingComboBox();
-			pEncodingComboBox->Create(_T("MVIEncodingComboBox-EncodingComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemEncodingComboBox->m_hWnd, (HMENU)ID_CTRL_START + 0, m_hInstance);
+			pEncodingComboBox->Create(_T("MVIEncodingComboBox-EncodingComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemEncodingComboBox->m_hWnd, (HMENU)(ID_CTRL_START + 0), m_hInstance);
 			pItemEncodingComboBox->m_mapChildMap.insert(std::make_pair(_T("MVIEncodingComboBox-EncodingComboBox"), pEncodingComboBox));
 			//AddCommandHandler(ID_CTRL_START + 0, CBN_SELCHANGE, (int(CWindow::*)(WPARAM, LPARAM)) & CMainWindow::OnCbnSelChange);
 			// BOMコンボボックス
 			CMultiViewItem* pItemBomComboBox = m_pMultiView->Get(1);
 			CComboBox* pBomComboBox = new CComboBox();
-			pBomComboBox->Create(_T("MVIBomComboBox-BomComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemBomComboBox->m_hWnd, (HMENU)ID_CTRL_START + 1, m_hInstance);
+			pBomComboBox->Create(_T("MVIBomComboBox-BomComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemBomComboBox->m_hWnd, (HMENU)(ID_CTRL_START + 1), m_hInstance);
 			pItemBomComboBox->m_mapChildMap.insert(std::make_pair(_T("MVIBomComboBox-BomComboBox"), pBomComboBox));
 			// コンテントエディットボックス
 			CMultiViewItem *pItemContentEditBox = m_pMultiView->Get(2);
 			CEditCore *pContentEditBox = new CEditCore();
-			pContentEditBox->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL | WS_BORDER, 0, 0, rc.right - rc.left, rc.bottom - rc.top - 75, pItemContentEditBox->m_hWnd, (HMENU)ID_CTRL_START + 2, m_hInstance);
+			pContentEditBox->Create(_T(""), WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL | WS_BORDER, 0, 0, rc.right - rc.left, rc.bottom - rc.top - 75, pItemContentEditBox->m_hWnd, (HMENU)(ID_CTRL_START + 2), m_hInstance);
 			pItemContentEditBox->m_mapChildMap.insert(std::make_pair(_T("MVIContentEditBox-ContentEditBox"), pContentEditBox));
 			// 改行コンボボックス
 			CMultiViewItem* pItemNewLineComboBox = m_pMultiView->Get(3);
 			CComboBox* pNewLineComboBox = new CComboBox();
-			pNewLineComboBox->Create(_T("MVINewLineComboBox-NewLineComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemNewLineComboBox->m_hWnd, (HMENU)ID_CTRL_START + 3, m_hInstance);
+			pNewLineComboBox->Create(_T("MVINewLineComboBox-NewLineComboBox"), WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, rc.right - rc.left, 200, pItemNewLineComboBox->m_hWnd, (HMENU)(ID_CTRL_START + 3), m_hInstance);
 			pItemNewLineComboBox->m_mapChildMap.insert(std::make_pair(_T("MVINewLineComboBox-NewLineComboBox"), pNewLineComboBox));
 			// 文字コードコンボボックスに文字列アイテムを追加
 			pEncodingComboBox->AddString(_T("Shift_JIS"));
