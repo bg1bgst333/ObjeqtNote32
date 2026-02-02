@@ -193,8 +193,32 @@ int CMainWindow::OnClose() {
 // 文字コードコンボボックスのアイテム選択が変更された時.
 int CMainWindow::OnCbnSelChangeEnc(WPARAM wParam, LPARAM lParam) {
 
-	// デバッグメッセージ.
-	OutputDebugString(_T("CMainWindow::OnCbnSelChangeEnc\n"));
+	// コンボボックスの制御.
+	CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
+	CMultiViewItem* pItemBomComboBox = m_pMultiView->Get(1);
+	CComboBox* pEncodingComboBox = (CComboBox*)pItemEncodingComboBox->m_mapChildMap[_T("MVIEncodingComboBox-EncodingComboBox")];
+	CComboBox* pBomComboBox = (CComboBox*)pItemBomComboBox->m_mapChildMap[_T("MVIBomComboBox-BomComboBox")];
+	int i = pEncodingComboBox->GetCurSel();
+	if (i == 0) {	// Shift_JISの場合.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_SHIFT_JIS;	// ENCODEはShift_JISとする.
+		pBomComboBox->SetCurSel(3);	// BOMのコンボボックスもNONEに.
+		m_pTextFile->m_Bom = CTextFile::BOM_NONE;	// BOMはNONEとする.
+	}
+	else if (i == 1) {	// UTF-16LEの場合.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_16LE;	// ENCODEはUTF-16LEとする.
+	}
+	else if (i == 2) {	// UTF-16BEの場合.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_16BE;	// ENCODEはUTF-16BEとする.
+	}
+	else if (i == 3) {	// UTF-8の場合.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_8;	// ENCODEはUTF-8とする.
+	}
+	else if (i == 4) {	// EUC-JPの場合.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_EUC_JP;	// ENCODEはEUC-JPとする.
+	}
+	else {	// JISの場合.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_JIS;	// ENCODEはJISとする.
+	}
 
 	// 0を返す.
 	return 0;	// 処理したので0.
@@ -204,8 +228,30 @@ int CMainWindow::OnCbnSelChangeEnc(WPARAM wParam, LPARAM lParam) {
 // BOMコンボボックスのアイテム選択が変更された時.
 int CMainWindow::OnCbnSelChangeBom(WPARAM wParam, LPARAM lParam) {
 
-	// デバッグメッセージ.
-	OutputDebugString(_T("CMainWindow::OnCbnSelChangeBom\n"));
+	// コンボボックスの制御.
+	CMultiViewItem* pItemEncodingComboBox = m_pMultiView->Get(0);
+	CMultiViewItem* pItemBomComboBox = m_pMultiView->Get(1);
+	CComboBox* pEncodingComboBox = (CComboBox*)pItemEncodingComboBox->m_mapChildMap[_T("MVIEncodingComboBox-EncodingComboBox")];
+	CComboBox* pBomComboBox = (CComboBox*)pItemBomComboBox->m_mapChildMap[_T("MVIBomComboBox-BomComboBox")];
+	int i = pBomComboBox->GetCurSel();
+	if (i == 0) {	// UTF-16LE BOMの場合.
+		m_pTextFile->m_Bom = CTextFile::BOM_UTF16LE;	// BOMはUTF-16LEとする.
+		pEncodingComboBox->SetCurSel(1);	// 文字コードのコンボボックスもUTF-16LEに.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_16LE;	// ENCODEはUTF-16LEとする.
+	}
+	else if (i == 1) {	// UTF-16BE BOMの場合.
+		m_pTextFile->m_Bom = CTextFile::BOM_UTF16BE;	// BOMはUTF-16BEとする.
+		pEncodingComboBox->SetCurSel(2);	// 文字コードのコンボボックスもUTF-16BEに.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_16BE;	// ENCODEはUTF-16BEとする.
+	}
+	else if (i == 2) {	// UTF-8 BOMの場合.
+		m_pTextFile->m_Bom = CTextFile::BOM_UTF8;	// BOMはUTF-8とする.
+		pEncodingComboBox->SetCurSel(3);	// 文字コードのコンボボックスもUTF-8に.
+		m_pTextFile->m_Encoding = CTextFile::ENCODING_UTF_8;	// ENCODEはUTF-8とする.
+	}
+	else {	// BOM NONEの場合.
+		m_pTextFile->m_Bom = CTextFile::BOM_NONE;	// BOMはなしとする.
+	}
 
 	// 0を返す.
 	return 0;	// 処理したので0.
@@ -215,8 +261,19 @@ int CMainWindow::OnCbnSelChangeBom(WPARAM wParam, LPARAM lParam) {
 // 改行コンボボックスのアイテム選択が変更された時.
 int CMainWindow::OnCbnSelChangeNewLine(WPARAM wParam, LPARAM lParam) {
 
-	// デバッグメッセージ.
-	OutputDebugString(_T("CMainWindow::OnCbnSelChangeNewLine\n"));
+	// コンボボックスの制御.
+	CMultiViewItem* pItemNewLineComboBox = m_pMultiView->Get(3);
+	CComboBox* pNewLineComboBox = (CComboBox*)pItemNewLineComboBox->m_mapChildMap[_T("MVINewLineComboBox-NewLineComboBox")];
+	int i = pNewLineComboBox->GetCurSel();
+	if (i == 0) {	// CRLFの場合.
+		m_pTextFile->m_NewLine = CTextFile::NEW_LINE_CRLF;	// 改行コードはCRLFとする.
+	}
+	else if (i == 1) {	// LFの場合.
+		m_pTextFile->m_NewLine = CTextFile::NEW_LINE_LF;	// 改行コードはLFとする.
+	}
+	else {	// CRの場合.
+		m_pTextFile->m_NewLine = CTextFile::NEW_LINE_CR;	// 改行コードはCRとする.
+	}
 
 	// 0を返す.
 	return 0;	// 処理したので0.
